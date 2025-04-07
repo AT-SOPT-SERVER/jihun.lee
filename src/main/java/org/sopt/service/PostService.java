@@ -8,6 +8,7 @@ import java.util.List;
 import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
 import org.sopt.repository.PostRepository;
+import org.sopt.utils.IdGenrator;
 
 public class PostService {
 
@@ -15,10 +16,9 @@ public class PostService {
 
     public void createPost(String title) {
         validateTitle(title);
-        PostRequestDto.Create dto = new PostRequestDto.Create(title);
-        int id = postRepository.nextId();
 
-        Post post = Post.create(dto, id);
+        PostRequestDto.Create dto = new PostRequestDto.Create(title);
+        Post post = new Post(IdGenrator.generateId(), dto.title());
         postRepository.save(post);
     }
 

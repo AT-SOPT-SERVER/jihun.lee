@@ -7,16 +7,10 @@ import org.sopt.domain.Post;
 
 public class PostRepository {
 
-    private int sequence = 0;
-
     List<Post> postList = new ArrayList<>();
 
     public void save(Post post) {
         postList.add(post);
-    }
-
-    public int nextId() {
-        return ++sequence;
     }
 
     public List<Post> findAll() {
