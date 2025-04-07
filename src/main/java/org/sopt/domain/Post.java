@@ -1,6 +1,6 @@
 package org.sopt.domain;
 
-import org.sopt.dto.PostCreateRequestDto;
+import org.sopt.dto.PostRequestDto;
 
 public class Post {
     private final int id;
@@ -12,7 +12,7 @@ public class Post {
         this.title = title;
     }
 
-    public static Post create(PostCreateRequestDto dto, int id) {
+    public static Post create(PostRequestDto.Create dto, int id) {
         return new Post(id, dto.title());
     }
 
