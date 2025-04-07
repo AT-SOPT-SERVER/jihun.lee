@@ -21,4 +21,5 @@ public class Post {
     public String getTitle() {
         return title;
     }
+
 }

@@ -10,6 +10,7 @@ public class PostController {
 
     public static final String FILE_SAVE_ERROR = "파일 저장 중 오류 발생";
     public static final String FILE_LOAD_ERROR = "파일 불러오기 중 오류 발생";
+
     private final PostService postService = new PostService();
 
     public boolean createPost(final String title) {

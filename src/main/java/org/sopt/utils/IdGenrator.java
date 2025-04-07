@@ -7,4 +7,5 @@ public class IdGenrator {
     public static int generateId() {
         return id++;
     }
+
 }

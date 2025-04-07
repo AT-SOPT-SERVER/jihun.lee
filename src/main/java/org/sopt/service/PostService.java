@@ -13,6 +13,7 @@ import org.sopt.validator.PostValidator;
 public class PostService {
 
     private LocalDateTime updatedAt;
+
     private final PostRepository postRepository = new PostRepository();
 
     public void createPost(String title) {

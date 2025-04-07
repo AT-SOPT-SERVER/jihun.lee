@@ -69,6 +69,7 @@ public class PostRepository {
     }
 
     public void loadPostsFromFile() throws IOException {
+
         String filePath = "org/sopt/assets/Post.txt";
         File file = new File(filePath);
 
