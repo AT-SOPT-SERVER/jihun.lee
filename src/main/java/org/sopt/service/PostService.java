@@ -5,6 +5,7 @@ import static org.sopt.exception.ErrorMessage.INVALID_TITLE_LENGTH;
 import static org.sopt.exception.ErrorMessage.NOT_EMPTY_TITLE;
 import static org.sopt.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,14 @@ public class PostService {
 
     public List<Post> getAllPostByKeyword(PostRequestDto.Search dto) {
         return postRepository.findAllByKeyword(dto.keyword());
+    }
+
+    public void savePostsToFile() throws IOException {
+        postRepository.savePostsToFile();
+    }
+
+    public void loadPostsFromFile() throws IOException {
+        postRepository.loadPostsFromFile();
     }
 
     private void validateTitle(String title) {

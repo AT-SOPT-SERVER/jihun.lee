@@ -1,5 +1,6 @@
 package org.sopt.controller;
 
+import java.io.IOException;
 import java.util.List;
 import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
@@ -47,6 +48,28 @@ public class PostController {
     public List<Post> searchPostsByKeyword(String keyword) {
         PostRequestDto.Search dto = new PostRequestDto.Search(keyword);
         return postService.getAllPostByKeyword(dto);
+    }
+
+    public boolean savePostsToFile() {
+        try {
+            postService.savePostsToFile();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("파일 저장 중 오류 발생: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean loadPostsFromFile() {
+        try {
+            postService.loadPostsFromFile();
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("파일 불러오기 중 오류 발생: " + e.getMessage());
+            return false;
+        }
     }
 
 }

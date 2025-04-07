@@ -23,8 +23,8 @@ public class Main {
                     System.out.println("\n📝 [게시글 작성]");
                     System.out.print("📌 제목을 입력해주세요: ");
                     String title = scanner.nextLine();
-                    boolean success = controller.createPost(title);
-                    if(success){
+                    boolean success1 = controller.createPost(title);
+                    if(success1){
                         System.out.println("✅ 게시글이 성공적으로 저장되었습니다!");
                     } else {
                         System.out.println("❌ 게시글이 저장되지 않았습니다.");
@@ -95,6 +95,26 @@ public class Main {
                     }
                     break;
 
+                case "7":
+                    System.out.println("\n📁 [게시글 파일로 저장]");
+                    boolean success2 = controller.savePostsToFile();
+                    if(success2){
+                        System.out.println("✅ 게시글이 파일로 저장되었습니다.");
+                    } else {
+                        System.out.println("❌ 게시글이 파일로 저장되지 않았습니다.");
+                    }
+                    break;
+
+                case "8":
+                    System.out.println("\n🔗 [게시글 불러오기]");
+                    boolean success3 = controller.loadPostsFromFile();
+                    if(success3){
+                        System.out.println("✅ 게시글이 성공적으로 불러와졌습니다.");
+                    } else {
+                        System.out.println("❌ 게시글이 파일로 불러와지지 않았습니다.");
+                    }
+                    break;
+
                 case "0":
                     System.out.println("\n👋 프로그램을 종료합니다. 감사합니다!");
                     return;
@@ -119,6 +139,8 @@ public class Main {
         System.out.println("4️⃣  게시글 수정");
         System.out.println("5️⃣  게시글 삭제");
         System.out.println("6️⃣  게시글 검색");
+        System.out.println("7️⃣  게시글 저장");
+        System.out.println("8️⃣  게시글 불러오기");
         System.out.println("0️⃣  프로그램 종료");
         System.out.println("=====================================");
     }
