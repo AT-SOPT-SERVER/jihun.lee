@@ -57,4 +57,9 @@ public class PostService {
             throw new IllegalArgumentException(DUPLICATED_TITLE.getMessage());
         }
     }
+
+    public List<Post> getAllPostByKeyword(String keyword) {
+        return postRepository.findAllByKeyword(keyword);
+    }
+
 }

@@ -42,4 +42,9 @@ public class PostController {
     public boolean deletePostById(int id) {
         return postService.deletePostById(id);
     }
+
+    public List<Post> searchPostsByKeyword(String keyword) {
+        return postService.getAllPostByKeyword(keyword);
+    }
+
 }
