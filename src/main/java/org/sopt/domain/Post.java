@@ -1,7 +1,5 @@
 package org.sopt.domain;
 
-import org.sopt.dto.PostRequestDto;
-
 public class Post {
 
     private final int id;
@@ -10,10 +8,6 @@ public class Post {
     public Post(int id, String title) {
         this.id = id;
         this.title = title;
-    }
-
-    public static Post create(PostRequestDto.Create dto, int id) {
-        return new Post(id, dto.title());
     }
 
     public void updateTitle(String newTitle) {
