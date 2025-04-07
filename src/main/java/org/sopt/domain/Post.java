@@ -3,6 +3,7 @@ package org.sopt.domain;
 import org.sopt.dto.PostRequestDto;
 
 public class Post {
+
     private final int id;
     private String title;
 

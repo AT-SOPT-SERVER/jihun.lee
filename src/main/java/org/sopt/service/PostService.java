@@ -10,6 +10,7 @@ import org.sopt.dto.PostRequestDto;
 import org.sopt.repository.PostRepository;
 
 public class PostService {
+
     private final PostRepository postRepository = new PostRepository();
 
     public void createPost(String title) {

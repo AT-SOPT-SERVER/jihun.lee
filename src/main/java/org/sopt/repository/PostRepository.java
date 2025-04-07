@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.sopt.domain.Post;
 
 public class PostRepository {
+
     private int sequence = 0;
 
     List<Post> postList = new ArrayList<>();
