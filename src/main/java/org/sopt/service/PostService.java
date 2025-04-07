@@ -3,7 +3,10 @@ package org.sopt.service;
 import static org.sopt.exception.ErrorMessage.DUPLICATED_TITLE;
 import static org.sopt.exception.ErrorMessage.INVALID_TITLE_LENGTH;
 import static org.sopt.exception.ErrorMessage.NOT_EMPTY_TITLE;
+import static org.sopt.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.sopt.domain.Post;
@@ -13,13 +16,17 @@ import org.sopt.utils.IdGenrator;
 
 public class PostService {
 
+    private LocalDateTime updatedAt;
     private final PostRepository postRepository = new PostRepository();
 
     public void createPost(String title) {
         validateTitle(title);
+        validateCreationInterval();
 
         PostRequestDto.Create dto = new PostRequestDto.Create(title);
         Post post = new Post(IdGenrator.generateId(), dto.title());
+
+        updatedAt = LocalDateTime.now();
         postRepository.save(post);
     }
 
@@ -55,6 +62,12 @@ public class PostService {
         }
         if(postRepository.isExistByTitle(title)){
             throw new IllegalArgumentException(DUPLICATED_TITLE.getMessage());
+        }
+    }
+
+    private void validateCreationInterval() {
+        if(updatedAt != null && Duration.between(updatedAt, LocalDateTime.now()).toMinutes() < 3){
+            throw new IllegalStateException(POST_CREATION_INTERVAL_EXCEEDED.getMessage());
         }
     }
 

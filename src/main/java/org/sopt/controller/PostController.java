@@ -14,7 +14,7 @@ public class PostController {
             postService.createPost(title);
             return true;
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println(e.getMessage());
             return false;
         }
