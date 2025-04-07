@@ -5,6 +5,7 @@ import static org.sopt.exception.ErrorMessage.INVALID_TITLE_LENGTH;
 import static org.sopt.exception.ErrorMessage.NOT_EMPTY_TITLE;
 
 import java.util.List;
+import java.util.Optional;
 import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
 import org.sopt.repository.PostRepository;
@@ -23,7 +24,11 @@ public class PostService {
     }
 
     public boolean updatePostTitle(final int id, final PostRequestDto.Update dto) {
-        Post post = postRepository.findById(id).get();
+        Optional<Post> optionalPost = postRepository.findById(id);
+
+        validateTitle(dto.newTitle());
+
+        Post post = optionalPost.get();
         post.updateTitle(dto.newTitle());
         return true;
     }

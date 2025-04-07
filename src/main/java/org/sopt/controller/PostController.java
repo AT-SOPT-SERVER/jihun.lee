@@ -13,6 +13,7 @@ public class PostController {
         try {
             postService.createPost(title);
             return true;
+
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
             return false;
@@ -28,8 +29,14 @@ public class PostController {
     }
 
     public boolean updatePostTitle(final int id, final String newTitle) {
-        PostRequestDto.Update dto = new PostRequestDto.Update(newTitle);
-        return postService.updatePostTitle(id, dto);
+        try {
+            PostRequestDto.Update dto = new PostRequestDto.Update(newTitle);
+            return postService.updatePostTitle(id, dto);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     public boolean deletePostById(int id) {
