@@ -16,6 +16,10 @@ public class Post {
         return new Post(id, dto.title());
     }
 
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
+    }
+
     public  int getId() {
         return id;
     }

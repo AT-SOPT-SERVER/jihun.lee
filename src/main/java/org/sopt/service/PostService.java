@@ -11,8 +11,15 @@ public class PostService {
     public void createPost(String title) {
         PostRequestDto.Create dto = new PostRequestDto.Create(title);
         int id = postRepository.nextId();
+
         Post post = Post.create(dto, id);
         postRepository.save(post);
+    }
+
+    public boolean updatePostTitle(final int id, final PostRequestDto.Update dto) {
+        Post post = postRepository.findById(id).get();
+        post.updateTitle(dto.newTitle());
+        return true;
     }
 
     public List<Post> getAllPosts() {
