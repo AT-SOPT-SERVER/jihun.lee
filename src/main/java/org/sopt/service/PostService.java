@@ -30,8 +30,8 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public boolean updatePostTitle(final int id, final PostRequestDto.Update dto) {
-        Optional<Post> optionalPost = postRepository.findById(id);
+    public boolean updatePostTitle(PostRequestDto.Update dto) {
+        Optional<Post> optionalPost = postRepository.findById(dto.id());
 
         validateTitle(dto.newTitle());
 
@@ -49,8 +49,12 @@ public class PostService {
                 .orElse(null);
     }
 
-    public boolean deletePostById(int id) {
-        return postRepository.deleteById(id);
+    public boolean deletePostById(PostRequestDto.Delete dto) {
+        return postRepository.deleteById(dto.id());
+    }
+
+    public List<Post> getAllPostByKeyword(PostRequestDto.Search dto) {
+        return postRepository.findAllByKeyword(dto.keyword());
     }
 
     private void validateTitle(String title) {
@@ -69,10 +73,6 @@ public class PostService {
         if(updatedAt != null && Duration.between(updatedAt, LocalDateTime.now()).toMinutes() < 3){
             throw new IllegalStateException(POST_CREATION_INTERVAL_EXCEEDED.getMessage());
         }
-    }
-
-    public List<Post> getAllPostByKeyword(String keyword) {
-        return postRepository.findAllByKeyword(keyword);
     }
 
 }

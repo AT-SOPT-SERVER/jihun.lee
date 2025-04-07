@@ -30,8 +30,8 @@ public class PostController {
 
     public boolean updatePostTitle(final int id, final String newTitle) {
         try {
-            PostRequestDto.Update dto = new PostRequestDto.Update(newTitle);
-            return postService.updatePostTitle(id, dto);
+            PostRequestDto.Update dto = new PostRequestDto.Update(id, newTitle);
+            return postService.updatePostTitle(dto);
 
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -40,11 +40,13 @@ public class PostController {
     }
 
     public boolean deletePostById(int id) {
-        return postService.deletePostById(id);
+        PostRequestDto.Delete dto = new PostRequestDto.Delete(id);
+        return postService.deletePostById(dto);
     }
 
     public List<Post> searchPostsByKeyword(String keyword) {
-        return postService.getAllPostByKeyword(keyword);
+        PostRequestDto.Search dto = new PostRequestDto.Search(keyword);
+        return postService.getAllPostByKeyword(dto);
     }
 
 }
