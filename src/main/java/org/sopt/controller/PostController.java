@@ -8,6 +8,8 @@ import org.sopt.service.PostService;
 
 public class PostController {
 
+    public static final String FILE_SAVE_ERROR = "파일 저장 중 오류 발생";
+    public static final String FILE_LOAD_ERROR = "파일 불러오기 중 오류 발생";
     private final PostService postService = new PostService();
 
     public boolean createPost(final String title) {
@@ -56,7 +58,7 @@ public class PostController {
             return true;
 
         } catch (IOException e) {
-            System.out.println("파일 저장 중 오류 발생: " + e.getMessage());
+            System.out.println(FILE_SAVE_ERROR + ": " + e.getMessage());
             return false;
         }
     }
@@ -67,7 +69,7 @@ public class PostController {
             return true;
 
         } catch (IOException e) {
-            System.out.println("파일 불러오기 중 오류 발생: " + e.getMessage());
+            System.out.println(FILE_LOAD_ERROR + ": " + e.getMessage());
             return false;
         }
     }
