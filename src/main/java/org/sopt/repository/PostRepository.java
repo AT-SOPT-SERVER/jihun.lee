@@ -83,6 +83,7 @@ public class PostRepository {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|", 2);
+
                 if(parts.length < 2) continue;
                 int id = Integer.parseInt(parts[0]);
                 String title = parts[1];
