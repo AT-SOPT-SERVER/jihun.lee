@@ -1,9 +1,10 @@
 package org.sopt.service;
 
+import static org.sopt.exception.ErrorMessage.NOT_FOUND_POST;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
 import org.sopt.repository.PostRepository;
@@ -27,11 +28,11 @@ public class PostService {
     }
 
     public boolean updatePostTitle(PostRequestDto.Update dto) {
-        Optional<Post> optionalPost = postRepository.findById(dto.id());
+        Post post = postRepository.findById(dto.id())
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_POST.getMessage()));
 
         PostValidator.validateTitle(dto.newTitle(), postRepository);
 
-        Post post = optionalPost.get();
         post.updateTitle(dto.newTitle());
         return true;
     }
@@ -40,7 +41,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Post getPostById(int id) {
+    public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElse(null);
     }
