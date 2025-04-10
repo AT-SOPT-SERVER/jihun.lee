@@ -16,11 +16,10 @@ public class PostService {
 
     private final PostRepository postRepository = new PostRepository();
 
-    public void createPost(String title) {
-        PostValidator.validateTitle(title, postRepository);
+    public void createPost(PostRequestDto.Create dto) {
+        PostValidator.validateTitle(dto.title(), postRepository);
         PostValidator.validateCreationInterval(updatedAt);
 
-        PostRequestDto.Create dto = new PostRequestDto.Create(title);
         Post post = new Post(IdGenrator.generateId(), dto.title());
 
         updatedAt = LocalDateTime.now();

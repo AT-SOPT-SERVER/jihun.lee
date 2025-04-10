@@ -15,7 +15,8 @@ public class PostController {
 
     public boolean createPost(final String title) {
         try {
-            postService.createPost(title);
+            PostRequestDto.Create dto = new PostRequestDto.Create(title);
+            postService.createPost(dto);
 
             return true;
         } catch (IllegalArgumentException | IllegalStateException e) {
