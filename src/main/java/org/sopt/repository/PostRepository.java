@@ -28,11 +28,11 @@ public class PostRepository {
         return new ArrayList<>(postMap.values());
     }
 
-    public Optional<Post> findById(int id) {
+    public Optional<Post> findById(Long id) {
         return Optional.ofNullable(postMap.get(id));
     }
 
-    public boolean deleteById(int id) {
+    public boolean deleteById(Long id) {
         return postMap.remove(id) != null;
     }
 

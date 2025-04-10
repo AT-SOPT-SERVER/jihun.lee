@@ -31,12 +31,12 @@ public class PostController {
         return postService.getAllPosts();
     }
 
-    public Post getPostById(int id) {
+    public Post getPostById(Long id) {
 
         return postService.getPostById(id);
     }
 
-    public boolean updatePostTitle(final int id, final String newTitle) {
+    public boolean updatePostTitle(final Long id, final String newTitle) {
         try {
             PostRequestDto.Update dto = new PostRequestDto.Update(id, newTitle);
 
@@ -49,7 +49,7 @@ public class PostController {
         }
     }
 
-    public boolean deletePostById(int id) {
+    public boolean deletePostById(Long id) {
         PostRequestDto.Delete dto = new PostRequestDto.Delete(id);
 
         return postService.deletePostById(dto);

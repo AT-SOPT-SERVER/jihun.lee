@@ -41,7 +41,7 @@ public class Main {
                 case "3":
                     System.out.println("\n🔍 [게시글 상세 조회]");
                     System.out.print("📌 조회할 게시글 ID를 입력해주세요: ");
-                    int id = Integer.parseInt(scanner.nextLine());
+                    Long id = Long.parseLong(scanner.nextLine());
                     Post found = controller.getPostById(id);
                     if (found != null) {
                         System.out.println("📄 게시글 상세 내용:");
@@ -57,7 +57,7 @@ public class Main {
                 case "4":
                     System.out.println("\n✏️ [게시글 수정]");
                     System.out.print("📌 수정할 게시글 ID를 입력해주세요: ");
-                    int updateId = Integer.parseInt(scanner.nextLine());
+                    Long updateId = Long.parseLong(scanner.nextLine());
                     System.out.print("📝 새 제목을 입력해주세요: ");
                     String newTitle = scanner.nextLine();
                     boolean updated = controller.updatePostTitle(updateId, newTitle);
@@ -71,7 +71,7 @@ public class Main {
                 case "5":
                     System.out.println("\n🗑️ [게시글 삭제]");
                     System.out.print("📌 삭제할 게시글 ID를 입력해주세요: ");
-                    int deleteId = Integer.parseInt(scanner.nextLine());
+                    Long deleteId = Long.parseLong(scanner.nextLine());
                     boolean deleted = controller.deletePostById(deleteId);
                     if (deleted) {
                         System.out.println("🗑️ 게시글이 성공적으로 삭제되었습니다.");

@@ -8,13 +8,13 @@ public class PostRequestDto{
         }
 
         public record Update(
-                int id,
+                Long id,
                 String newTitle
         ) {
         }
 
         public record Delete(
-                int id
+                Long id
         ) {
         }
 
