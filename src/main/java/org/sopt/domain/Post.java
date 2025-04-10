@@ -2,10 +2,10 @@ package org.sopt.domain;
 
 public class Post {
 
-    private final int id;
+    private final Long id;
     private String title;
 
-    public Post(int id, String title) {
+    public Post(Long id, String title) {
         this.id = id;
         this.title = title;
     }
@@ -14,7 +14,7 @@ public class Post {
         this.title = newTitle;
     }
 
-    public  int getId() {
+    public Long getId() {
         return id;
     }
 

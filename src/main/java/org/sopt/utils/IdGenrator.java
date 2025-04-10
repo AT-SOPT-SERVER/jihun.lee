@@ -2,9 +2,9 @@ package org.sopt.utils;
 
 public class IdGenrator {
 
-    private static int id = 1;
+    private static int id = 0;
 
-    public static int generateId() {
+    public static long generateId() {
         return id++;
     }
 
