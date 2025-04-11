@@ -97,8 +97,8 @@ public class Main {
 
                 case "7":
                     System.out.println("\n📁 [게시글 파일로 저장]");
-                    boolean success2 = controller.savePostsToFile();
-                    if(success2){
+                    boolean isSaveSuccessful = controller.savePostsToFile();
+                    if(isSaveSuccessful){
                         System.out.println("✅ 게시글이 파일로 저장되었습니다.");
                     } else {
                         System.out.println("❌ 게시글이 파일로 저장되지 않았습니다.");
@@ -107,8 +107,8 @@ public class Main {
 
                 case "8":
                     System.out.println("\n🔗 [게시글 불러오기]");
-                    boolean success3 = controller.loadPostsFromFile();
-                    if(success3){
+                    boolean isLoadSuccessful = controller.loadPostsFromFile();
+                    if(isLoadSuccessful){
                         System.out.println("✅ 게시글이 성공적으로 불러와졌습니다.");
                     } else {
                         System.out.println("❌ 게시글이 파일로 불러와지지 않았습니다.");
