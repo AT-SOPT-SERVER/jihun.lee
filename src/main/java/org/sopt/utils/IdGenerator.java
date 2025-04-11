@@ -1,6 +1,6 @@
 package org.sopt.utils;
 
-public class IdGenrator {
+public class IdGenerator {
 
     private static int id = 0;
 

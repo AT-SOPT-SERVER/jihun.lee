@@ -9,7 +9,7 @@ import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
 import org.sopt.repository.FileRepository;
 import org.sopt.repository.PostRepository;
-import org.sopt.utils.IdGenrator;
+import org.sopt.utils.IdGenerator;
 import org.sopt.validator.PostValidator;
 
 public class PostService {
@@ -24,7 +24,7 @@ public class PostService {
         PostValidator.validateTitle(dto.title(), postRepository);
         PostValidator.validateCreationInterval(updatedAt);
 
-        Post post = new Post(IdGenrator.generateId(), dto.title());
+        Post post = new Post(IdGenerator.generateId(), dto.title());
 
         updatedAt = LocalDateTime.now();
         postRepository.save(post);

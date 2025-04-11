@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import org.sopt.domain.Post;
+import org.sopt.utils.IdGenerator;
 
 public class FileRepository {
 
@@ -39,7 +40,7 @@ public class FileRepository {
 
                 if (parts.length < 2) continue;
                 String title = parts[1];
-                Post post = new Post(org.sopt.utils.IdGenrator.generateId(), title);
+                Post post = new Post(IdGenerator.generateId(), title);
 
                 postRepository.save(post);
             }
