@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.sopt.domain.Post;
 import org.sopt.dto.PostRequestDto;
+import org.sopt.repository.FileRepository;
 import org.sopt.repository.PostRepository;
 import org.sopt.utils.IdGenrator;
 import org.sopt.validator.PostValidator;
@@ -16,6 +17,8 @@ public class PostService {
     private LocalDateTime updatedAt;
 
     private final PostRepository postRepository = new PostRepository();
+    private final FileRepository fileRepository = new FileRepository();
+
 
     public void createPost(PostRequestDto.Create dto) {
         PostValidator.validateTitle(dto.title(), postRepository);
@@ -55,11 +58,11 @@ public class PostService {
     }
 
     public void savePostsToFile() throws IOException {
-        postRepository.savePostsToFile();
+        fileRepository.saveToFile(postRepository.findAll());
     }
 
     public void loadPostsFromFile() throws IOException {
-        postRepository.loadPostsFromFile();
+        fileRepository.loadFromFile(postRepository);
     }
 
 }
