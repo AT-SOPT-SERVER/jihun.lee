@@ -1,13 +1,12 @@
-package org.sopt.validator;
+package org.sopt.common.utils;
 
-import static org.sopt.exception.ErrorMessage.DUPLICATED_TITLE;
-import static org.sopt.exception.ErrorMessage.INVALID_TITLE_LENGTH;
-import static org.sopt.exception.ErrorMessage.NOT_EMPTY_TITLE;
-import static org.sopt.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
+import static org.sopt.common.exception.ErrorMessage.DUPLICATED_TITLE;
+import static org.sopt.common.exception.ErrorMessage.INVALID_TITLE_LENGTH;
+import static org.sopt.common.exception.ErrorMessage.NOT_EMPTY_TITLE;
+import static org.sopt.common.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import org.sopt.repository.PostRepository;
-import org.sopt.utils.PostValidatorUtil;
 
 public class PostValidator {
 
@@ -19,7 +18,7 @@ public class PostValidator {
         if (graphemeCount > 30) {
             throw new IllegalArgumentException(INVALID_TITLE_LENGTH.getMessage());
         }
-        if (postRepository.isExistByTitle(title)) {
+        if (postRepository.existsByTitle(title)) {
             throw new IllegalArgumentException(DUPLICATED_TITLE.getMessage());
         }
     }

@@ -1,4 +1,4 @@
-package org.sopt.utils;
+package org.sopt.common.utils;
 
 public class PostValidatorUtil {
 
