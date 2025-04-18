@@ -1,6 +1,6 @@
-package org.sopt.common.utils;
+package org.sopt.global.utils;
 
-public class PostValidatorUtil {
+public class EmojiAndZwjStringUtil {
 
     public static int countGraphemeClusters(String s) {
         int count = 0;

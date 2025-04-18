@@ -1,12 +1,12 @@
-package org.sopt.common.utils;
+package org.sopt.global.utils;
 
-import static org.sopt.common.exception.ErrorMessage.DUPLICATED_TITLE;
-import static org.sopt.common.exception.ErrorMessage.INVALID_TITLE_LENGTH;
-import static org.sopt.common.exception.ErrorMessage.NOT_EMPTY_TITLE;
-import static org.sopt.common.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
+import static org.sopt.post.exception.ErrorMessage.DUPLICATED_TITLE;
+import static org.sopt.post.exception.ErrorMessage.INVALID_TITLE_LENGTH;
+import static org.sopt.post.exception.ErrorMessage.NOT_EMPTY_TITLE;
+import static org.sopt.post.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import org.sopt.repository.PostRepository;
+import org.sopt.post.repository.PostRepository;
 
 public class PostValidator {
 
@@ -14,7 +14,7 @@ public class PostValidator {
         if (title.isEmpty()) {
             throw new IllegalArgumentException(NOT_EMPTY_TITLE.getMessage());
         }
-        int graphemeCount = PostValidatorUtil.countGraphemeClusters(title);
+        int graphemeCount = EmojiAndZwjStringUtil.countGraphemeClusters(title);
         if (graphemeCount > 30) {
             throw new IllegalArgumentException(INVALID_TITLE_LENGTH.getMessage());
         }
