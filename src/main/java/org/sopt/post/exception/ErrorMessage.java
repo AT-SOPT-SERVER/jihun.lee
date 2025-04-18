@@ -1,4 +1,4 @@
-package org.sopt.common.exception;
+package org.sopt.post.exception;
 
 public enum ErrorMessage {
 

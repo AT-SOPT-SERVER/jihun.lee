@@ -1,4 +1,4 @@
-package org.sopt.domain;
+package org.sopt.post.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
