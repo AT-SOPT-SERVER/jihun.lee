@@ -1,31 +1,31 @@
 package org.sopt.global.utils;
 
-import static org.sopt.post.exception.ErrorMessage.DUPLICATED_TITLE;
-import static org.sopt.post.exception.ErrorMessage.INVALID_TITLE_LENGTH;
-import static org.sopt.post.exception.ErrorMessage.NOT_EMPTY_TITLE;
-import static org.sopt.post.exception.ErrorMessage.POST_CREATION_INTERVAL_EXCEEDED;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import org.sopt.post.exception.DuplicatedTitleException;
+import org.sopt.post.exception.EmptyTitleException;
+import org.sopt.post.exception.InvalidTitleLengthException;
+import org.sopt.post.exception.PostCreationExceededException;
 import org.sopt.post.repository.PostRepository;
 
 public class PostValidator {
 
     public static void validateTitle(String title, PostRepository postRepository) {
         if (title.isEmpty()) {
-            throw new IllegalArgumentException(NOT_EMPTY_TITLE.getMessage());
+            throw new EmptyTitleException();
         }
         int graphemeCount = EmojiAndZwjStringUtil.countGraphemeClusters(title);
         if (graphemeCount > 30) {
-            throw new IllegalArgumentException(INVALID_TITLE_LENGTH.getMessage());
+            throw new InvalidTitleLengthException();
         }
         if (postRepository.existsByTitle(title)) {
-            throw new IllegalArgumentException(DUPLICATED_TITLE.getMessage());
+            throw new DuplicatedTitleException();
         }
     }
 
     public static void validateCreationInterval(LocalDateTime updatedAt) {
         if (updatedAt != null && Duration.between(updatedAt, LocalDateTime.now()).toMinutes() < 3) {
-            throw new IllegalStateException(POST_CREATION_INTERVAL_EXCEEDED.getMessage());
+            throw new PostCreationExceededException();
         }
     }
 

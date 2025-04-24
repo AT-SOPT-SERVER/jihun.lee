@@ -1,19 +1,16 @@
 package org.sopt.post.service;
 
-import static org.sopt.post.exception.ErrorMessage.NOT_FOUND_POST;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.sopt.global.utils.PostValidator;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.PostRequestDto;
+import org.sopt.post.exception.PostNotFoundException;
 import org.sopt.post.repository.PostRepository;
-import org.sopt.global.utils.PostValidator;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PostService {
-
-    private LocalDateTime updatedAt;
 
     private final PostRepository postRepository;
 
@@ -23,19 +20,17 @@ public class PostService {
 
     public Post createPost(PostRequestDto.Create dto) {
         PostValidator.validateTitle(dto.title(), postRepository);
-        PostValidator.validateCreationInterval(updatedAt);
+        LocalDateTime latestModifiedAt = postRepository.findLatestModifiedAt().orElse(null);
+        PostValidator.validateCreationInterval(latestModifiedAt);
 
         Post post = new Post(dto.title());
 
-        Post savedPost = postRepository.save(post);
-        updatedAt = LocalDateTime.now();
-
-        return savedPost;
+        return postRepository.save(post);
     }
 
     public Post updatePostTitle(PostRequestDto.Update dto) {
         Post post = postRepository.findById(dto.id())
-                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_POST.getMessage()));
+                .orElseThrow(PostNotFoundException::new);
 
         PostValidator.validateTitle(dto.newTitle(), postRepository);
         post.updateTitle(dto.newTitle());
@@ -49,21 +44,22 @@ public class PostService {
     }
 
     public Post getPostById(Long id) {
+
         return postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_POST.getMessage()));
+                .orElseThrow(PostNotFoundException::new);
     }
 
 
-    public boolean deletePostById(PostRequestDto.Delete dto) {
+    public void deletePostById(PostRequestDto.Delete dto) {
         if (!postRepository.existsById(dto.id())) {
-            throw new IllegalArgumentException(NOT_FOUND_POST.getMessage());
+            throw new PostNotFoundException();
         }
-        postRepository.deleteById(dto.id());
 
-        return true;
+        postRepository.deleteById(dto.id());
     }
 
     public List<Post> searchPosts(PostRequestDto.Search dto) {
+
         return postRepository.findAllByTitleContaining(dto.keyword());
     }
 
