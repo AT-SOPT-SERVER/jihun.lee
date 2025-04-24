@@ -1,10 +1,11 @@
 package org.sopt.post.controller;
 
 import java.util.List;
+import org.sopt.global.common.response.ApiResponse;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.PostRequestDto;
 import org.sopt.post.service.PostService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,43 +27,45 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody PostRequestDto.Create dto){
+    public ApiResponse<Post> createPost(@RequestBody PostRequestDto.Create dto){
         Post savedPost = postService.createPost(dto);
 
-        return ResponseEntity.ok(savedPost);
+        return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.POST_CREATE_SUCCESS.getMessage(), savedPost);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ApiResponse<List<Post>> getAllPosts() {
+        List<Post> list = postService.getAllPosts();
+
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), list);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePostTitle(@PathVariable Long id, @RequestBody PostRequestDto.Update dto) {
+    public ApiResponse<Post> updatePostTitle(@PathVariable Long id, @RequestBody PostRequestDto.Update dto) {
         Post updatedPost = postService.updatePostTitle(new PostRequestDto.Update(id, dto.newTitle()));
 
-        return ResponseEntity.ok(updatedPost);
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_UPDATE_SUCCESS.getMessage(), updatedPost);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+    public ApiResponse<Post> getPostById(@PathVariable Long id) {
         Post post = postService.getPostById(id);
 
-        return ResponseEntity.ok(post);
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_DETAIL_SUCCESS.getMessage(), post);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletePostById(@PathVariable Long id) {
-        boolean result = postService.deletePostById(new PostRequestDto.Delete(id));
+    public ApiResponse<Void> deletePostById(@PathVariable Long id) {
+        postService.deletePostById(new PostRequestDto.Delete(id));
 
-        return ResponseEntity.ok(result);
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_DELETE_SUCCESS.getMessage());
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Post>> searchPosts(@RequestParam String keyword) {
-        List<Post> posts = postService.searchPosts(new PostRequestDto.Search(keyword));
+    public ApiResponse<List<Post>> searchPosts(@RequestParam String keyword) {
+        List<Post> result = postService.searchPosts(new PostRequestDto.Search(keyword));
 
-        return ResponseEntity.ok(posts);
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), result);
     }
 
 }
