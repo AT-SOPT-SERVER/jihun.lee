@@ -1,4 +1,4 @@
-package org.sopt.dto;
+package org.sopt.post.dto;
 
 public class PostRequestDto{
 
