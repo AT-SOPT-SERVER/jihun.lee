@@ -1,7 +1,6 @@
 package org.sopt.global.common.exception;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.sopt.global.common.exception.response.ExceptionResponse;
 import org.sopt.global.common.exception.response.ValidErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -44,10 +44,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ExceptionResponse> handleNotFound(NoSuchElementException e) {
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNoResourceFound(NoResourceFoundException e) {
         ExceptionResponse body = ExceptionResponse.response(HttpStatus.NOT_FOUND, e.getMessage());
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
