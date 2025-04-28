@@ -3,6 +3,7 @@ package org.sopt.post.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.sopt.post.domain.Post;
+import org.sopt.post.domain.enums.Tags;
 import org.sopt.post.dto.PostRequestDto;
 import org.sopt.post.exception.PostNotFoundException;
 import org.sopt.post.repository.PostRepository;
@@ -26,23 +27,30 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(PostRequestDto.Create dto, Long userId) {
+    public void createPost(PostRequestDto.Create dto, Long userId) {
         User author = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         PostValidator.validateTitle(dto.title(), postRepository);
         PostValidator.validateContent(dto.content());
 
-        LocalDateTime latestModifiedAt = postRepository.findLatestModifiedAt().orElse(null);
-        PostValidator.validateCreationInterval(latestModifiedAt);
+        LocalDateTime latestModifiedAtForUser = postRepository
+                .findFirstByAuthorIdOrderByModifiedAtDesc(userId)
+                .map(Post::getModifiedAt)
+                .orElse(null);
+        PostValidator.validateCreationInterval(latestModifiedAtForUser);
 
-        Post post = new Post(dto.title(), dto.content(), author);
+        Tags tagEnum = dto.tag() != null
+                ? Tags.to(dto.tag())
+                : null;
 
-        return postRepository.save(post);
+        Post post = new Post(dto.title(), dto.content(), tagEnum, author);
+
+        postRepository.save(post);
     }
 
     @Transactional
-    public Post updatePost(Long userId, Long postId, PostRequestDto.Update dto) {
+    public void updatePost(Long userId, Long postId, PostRequestDto.Update dto) {
         User author = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -53,13 +61,22 @@ public class PostService {
             throw new UnauthorizedException();
         }
 
-        PostValidator.validateTitle(dto.newTitle(), postRepository);
-        post.updateTitle(dto.newTitle());
+        if (dto.newTitle() != null) {
+            PostValidator.validateTitle(dto.newTitle(), postRepository);
+            post.updateTitle(dto.newTitle());
+        }
 
-        PostValidator.validateContent(dto.newContent());
-        post.updateContent(dto.newContent());
+        if (dto.newContent() != null) {
+            PostValidator.validateContent(dto.newContent());
+            post.updateContent(dto.newContent());
+        }
 
-        return postRepository.save(post);
+        if (dto.newTag() != null) {
+            Tags newTag = Tags.to(dto.newTag());
+            post.updateTags(newTag);
+        }
+
+        postRepository.save(post);
     }
 
     public List<Post> getAllPosts() {
