@@ -3,13 +3,14 @@ package org.sopt.post.dto;
 public class PostRequestDto{
 
         public record Create(
-                String title
+                String title,
+                String content
         ){
         }
 
         public record Update(
-                Long id,
-                String newTitle
+                String newTitle,
+                String newContent
         ) {
         }
 
