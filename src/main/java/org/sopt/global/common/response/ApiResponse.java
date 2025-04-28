@@ -1,6 +1,7 @@
 package org.sopt.global.common.response;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class ApiResponse<T> {
 
@@ -18,26 +19,30 @@ public class ApiResponse<T> {
         this(status, message, null);
     }
 
-    public static <T> ApiResponse<T> response(
+    public static <T> ResponseEntity<ApiResponse<T>> response(
             HttpStatus httpStatus,
             String message,
             T data
     ) {
-        return new ApiResponse<>(
+        ApiResponse<T> body = new ApiResponse<>(
                 httpStatus.value(),
                 message,
                 data
         );
+
+        return ResponseEntity.status(httpStatus).body(body);
     }
 
-    public static <T> ApiResponse<T> response(
+    public static <T> ResponseEntity<ApiResponse<T>> response(
             HttpStatus httpStatus,
             String message
     ) {
-        return new ApiResponse<>(
+        ApiResponse<T> body = new ApiResponse<>(
                 httpStatus.value(),
                 message
         );
+
+        return ResponseEntity.status(httpStatus).body(body);
     }
 
     public int getStatus() { return status; }
