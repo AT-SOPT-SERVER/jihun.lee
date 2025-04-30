@@ -48,6 +48,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNoResourceFound(NoResourceFoundException e) {
         ExceptionResponse body = ExceptionResponse.response(HttpStatus.NOT_FOUND, e.getMessage());
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
@@ -57,6 +58,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.METHOD_NOT_ALLOWED,
                 e.getMessage()
         );
+
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(body);
@@ -65,12 +67,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         Throwable cause = ex.getMostSpecificCause();
-
         if (cause instanceof BaseException baseEx) {
             ExceptionResponse body = ExceptionResponse.response(
                     baseEx.getStatus(),
                     baseEx.getMessage()
             );
+
             return new ResponseEntity<>(body, baseEx.getStatus());
         }
 
@@ -78,6 +80,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 ErrorMessage.JSON_PARSE_ERROR.getMessage()
         );
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(body);
