@@ -5,6 +5,7 @@ import org.sopt.global.common.exception.response.ExceptionResponse;
 import org.sopt.global.common.exception.response.ValidErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,7 +37,6 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
 
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ExceptionResponse> handleIllegalArgument(IllegalArgumentException e) {
         ExceptionResponse body = ExceptionResponse.response(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -48,6 +48,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleNoResourceFound(NoResourceFoundException e) {
         ExceptionResponse body = ExceptionResponse.response(HttpStatus.NOT_FOUND, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ExceptionResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
+        ExceptionResponse body = ExceptionResponse.response(
+                HttpStatus.METHOD_NOT_ALLOWED,
+                e.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(body);
     }
 
     @ExceptionHandler(Exception.class)
