@@ -1,10 +1,18 @@
 package org.sopt.post.service;
 
+import static org.sopt.global.utils.PostCreationIntervalValidator.validateCreationInterval;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import org.sopt.post.domain.Post;
 import org.sopt.post.domain.enums.Tags;
-import org.sopt.post.dto.PostRequestDto;
+import org.sopt.post.dto.request.PostCreateRequest;
+import org.sopt.post.dto.request.PostDeleteRequest;
+import org.sopt.post.dto.request.PostSearchRequest;
+import org.sopt.post.dto.request.PostUpdateRequest;
+import org.sopt.post.dto.response.PostDetailResponse;
+import org.sopt.post.dto.response.PostSummaryResponse;
+import org.sopt.post.exception.DuplicatedTitleException;
 import org.sopt.post.exception.PostNotFoundException;
 import org.sopt.post.repository.PostRepository;
 import org.sopt.user.domain.User;
@@ -27,30 +35,28 @@ public class PostService {
     }
 
     @Transactional
-    public void createPost(PostRequestDto.Create dto, Long userId) {
+    public void createPost(PostCreateRequest.Create dto, final Long userId) {
         User author = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        PostValidator.validateTitle(dto.title(), postRepository);
-        PostValidator.validateContent(dto.content());
+        if (postRepository.existsByTitle(dto.title())) {
+            throw new DuplicatedTitleException();
+        }
 
         LocalDateTime latestModifiedAtForUser = postRepository
                 .findFirstByAuthorIdOrderByModifiedAtDesc(userId)
                 .map(Post::getModifiedAt)
                 .orElse(null);
-        PostValidator.validateCreationInterval(latestModifiedAtForUser);
+        validateCreationInterval(latestModifiedAtForUser);
 
-        Tags tagEnum = dto.tag() != null
-                ? Tags.to(dto.tag())
-                : null;
+        Tags tagEnum = dto.tag() != null ? Tags.to(dto.tag()) : null;
 
         Post post = new Post(dto.title(), dto.content(), tagEnum, author);
-
         postRepository.save(post);
     }
 
     @Transactional
-    public void updatePost(Long userId, Long postId, PostRequestDto.Update dto) {
+    public void updatePost(final Long userId, final Long postId, PostUpdateRequest.Update dto) {
         User author = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -62,15 +68,11 @@ public class PostService {
         }
 
         if (dto.newTitle() != null) {
-            PostValidator.validateTitle(dto.newTitle(), postRepository);
             post.updateTitle(dto.newTitle());
         }
-
         if (dto.newContent() != null) {
-            PostValidator.validateContent(dto.newContent());
             post.updateContent(dto.newContent());
         }
-
         if (dto.newTag() != null) {
             Tags newTag = Tags.to(dto.newTag());
             post.updateTags(newTag);
@@ -79,19 +81,23 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public List<Post> getAllPosts() {
+    public List<PostSummaryResponse.Summary> getAllPosts() {
 
-        return postRepository.findAll();
+        return postRepository.findAllByOrderByModifiedAtDesc()
+                .stream()
+                .map(PostSummaryResponse.Summary::of)
+                .toList();
     }
 
-    public Post getPostById(Long id) {
-
-        return postRepository.findById(id)
+    public PostDetailResponse.Detail getPostById(final Long id) {
+        Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
+
+        return PostDetailResponse.Detail.of(post);
     }
 
     @Transactional
-    public void deletePostById(PostRequestDto.Delete dto) {
+    public void deletePostById(PostDeleteRequest.Delete dto) {
         if (!postRepository.existsById(dto.id())) {
             throw new PostNotFoundException();
         }
@@ -99,9 +105,28 @@ public class PostService {
         postRepository.deleteById(dto.id());
     }
 
-    public List<Post> searchPosts(PostRequestDto.Search dto) {
+    public List<Post> searchPosts(PostSearchRequest.Search dto) {
+        String keyword = dto.keyword();
+        String tag     = dto.tag();
 
-        return postRepository.findAllByTitleContaining(dto.keyword());
+        if (keyword == null && tag == null) {
+            return List.of();
+        }
+
+        if (keyword == null) {
+            return Tags.from(tag)
+                    .map(postRepository::findAllByTags)
+                    .orElse(List.of());
+        }
+
+        if (tag == null) {
+            return postRepository
+                    .findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(keyword, keyword);
+        }
+
+        return Tags.from(tag)
+                .map(t -> postRepository.searchByKeywordAndTag(keyword, t))
+                .orElse(List.of());
     }
 
 }

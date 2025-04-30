@@ -1,6 +1,7 @@
 package org.sopt.post.domain.enums;
 
 import java.util.Arrays;
+import java.util.Optional;
 import org.sopt.post.exception.TagsNotFoundException;
 
 public enum Tags {
@@ -20,6 +21,13 @@ public enum Tags {
                 .filter(Tags -> Tags.getValue().equals(before))
                 .findAny()
                 .orElseThrow(TagsNotFoundException::new);
+    }
+
+    public static Optional<Tags> from(String before) {
+        if (before == null) return Optional.empty();
+        return Arrays.stream(Tags.values())
+                .filter(tags -> tags.getValue().equals(before))
+                .findAny();
     }
 
     public String getValue() {
