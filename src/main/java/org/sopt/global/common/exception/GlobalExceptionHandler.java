@@ -5,6 +5,7 @@ import org.sopt.global.common.exception.response.ExceptionResponse;
 import org.sopt.global.common.exception.response.ValidErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,6 +59,27 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(body);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getMostSpecificCause();
+
+        if (cause instanceof BaseException baseEx) {
+            ExceptionResponse body = ExceptionResponse.response(
+                    baseEx.getStatus(),
+                    baseEx.getMessage()
+            );
+            return new ResponseEntity<>(body, baseEx.getStatus());
+        }
+
+        ExceptionResponse body = ExceptionResponse.response(
+                HttpStatus.BAD_REQUEST.value(),
+                ErrorMessage.JSON_PARSE_ERROR.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(body);
     }
 

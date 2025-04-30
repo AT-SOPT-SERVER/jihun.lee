@@ -10,4 +10,8 @@ public record ExceptionResponse (
     public static ExceptionResponse response(HttpStatus status, String message) {
         return new ExceptionResponse(status.value(), message);
     }
+
+    public static ExceptionResponse response(int status, String message) {
+        return new ExceptionResponse(status, message);
+    }
 }
