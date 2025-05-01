@@ -16,7 +16,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ExceptionResponse> handleException(BaseException e) {
-        ExceptionResponse body = ExceptionResponse.response(e.getStatus(), e.getMessage());
+        ExceptionResponse body = ExceptionResponse.of(e.getStatus(), e.getMessage());
 
         return new ResponseEntity<>(body, e.getStatus());
     }
@@ -39,21 +39,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ExceptionResponse> handleIllegalArgument(IllegalArgumentException e) {
-        ExceptionResponse body = ExceptionResponse.response(HttpStatus.BAD_REQUEST, e.getMessage());
+        ExceptionResponse body = ExceptionResponse.of(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.badRequest().body(body);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNoResourceFound(NoResourceFoundException e) {
-        ExceptionResponse body = ExceptionResponse.response(HttpStatus.NOT_FOUND, e.getMessage());
+        ExceptionResponse body = ExceptionResponse.of(HttpStatus.NOT_FOUND, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ExceptionResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
-        ExceptionResponse body = ExceptionResponse.response(
+        ExceptionResponse body = ExceptionResponse.of(
                 HttpStatus.METHOD_NOT_ALLOWED,
                 e.getMessage()
         );
@@ -67,15 +67,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
         Throwable cause = ex.getMostSpecificCause();
         if (cause instanceof BaseException baseEx) {
-            ExceptionResponse body = ExceptionResponse.response(
-                    baseEx.getStatus(),
-                    baseEx.getMessage()
-            );
+            HttpStatus status = baseEx.getStatus();
+            ExceptionResponse body = ExceptionResponse.of(status, baseEx.getMessage());
 
-            return new ResponseEntity<>(body, baseEx.getStatus());
+            return ResponseEntity.status(status).body(body);
         }
 
-        ExceptionResponse body = ExceptionResponse.response(
+        ExceptionResponse body = ExceptionResponse.of(
                 HttpStatus.BAD_REQUEST.value(),
                 ErrorMessage.JSON_PARSE_ERROR.getMessage()
         );
@@ -87,7 +85,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleAll(Exception e) {
-        ExceptionResponse body = ExceptionResponse.response(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        ExceptionResponse body = ExceptionResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
