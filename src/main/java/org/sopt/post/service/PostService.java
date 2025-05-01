@@ -1,6 +1,7 @@
 package org.sopt.post.service;
 
 import static org.sopt.global.utils.PostCreationIntervalValidator.validateCreationInterval;
+import static org.sopt.global.utils.StringUtils.isNullOrBlank;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -109,17 +110,17 @@ public class PostService {
         String keyword = dto.keyword();
         String tag     = dto.tag();
 
-        if (keyword == null && tag == null) {
+        if (isNullOrBlank(keyword) && isNullOrBlank(tag)) {
             return List.of();
         }
 
-        if (keyword == null) {
+        if (isNullOrBlank(keyword)) {
             return Tags.from(tag)
                     .map(postRepository::findAllByTags)
                     .orElse(List.of());
         }
 
-        if (tag == null) {
+        if (isNullOrBlank(tag)) {
             return postRepository
                     .findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(keyword, keyword);
         }
