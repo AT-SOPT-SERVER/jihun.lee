@@ -14,9 +14,10 @@ import org.sopt.post.dto.response.PostDetailResponse;
 import org.sopt.post.dto.response.PostSummaryResponse;
 import org.sopt.post.exception.DuplicatedTitleException;
 import org.sopt.post.exception.PostNotFoundException;
+import org.sopt.post.exception.UnauthorizedDeleteException;
+import org.sopt.post.exception.UnauthorizedUpdateException;
 import org.sopt.post.repository.PostRepository;
 import org.sopt.user.domain.User;
-import org.sopt.user.exception.UnauthorizedException;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         if (!post.getAuthor().equals(author)) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedUpdateException();
         }
 
         if (dto.newTitle() != null) {
@@ -98,11 +99,17 @@ public class PostService {
 
     @Transactional
     public void deletePostById(PostDeleteRequest.Delete dto) {
-        if (!postRepository.existsById(dto.id())) {
-            throw new PostNotFoundException();
+        User author = userRepository.findById(dto.userId())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(dto.postId())
+                .orElseThrow(PostNotFoundException::new);
+
+        if (!post.getAuthor().equals(author)) {
+            throw new UnauthorizedDeleteException();
         }
 
-        postRepository.deleteById(dto.id());
+        postRepository.deleteById(dto.postId());
     }
 
     public List<Post> searchPosts(PostSearchRequest.Search dto) {
