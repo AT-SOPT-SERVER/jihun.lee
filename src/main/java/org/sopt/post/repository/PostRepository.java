@@ -11,18 +11,19 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
     boolean existsByTitle(String title);
 
     List<Post> findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(String titleKeyword, String authorKeyword);
 
     List<Post> findAllByTags(Tags tag);
 
+    List<Post> findAllByOrderByModifiedAtDesc();
+
     @Query("select p from Post p join p.author a where p.tags = :tag and (lower(p.title) like lower(concat('%', :keyword, '%')) or lower(a.nickname) like lower(concat('%', :keyword, '%')))")
     List<Post> searchByKeywordAndTag(@Param("keyword") String keyword, @Param("tag") Tags tag);
 
     Optional<Post> findFirstByAuthorIdOrderByModifiedAtDesc(Long authorId);
 
-    List<Post> findAllByOrderByModifiedAtDesc();
-
+    @Query("select p from Post p join fetch p.author where p.id = :id")
+    Optional<Post> findByIdWithAuthor(@Param("id") Long id);
 }

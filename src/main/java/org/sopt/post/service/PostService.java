@@ -57,13 +57,10 @@ public class PostService {
 
     @Transactional
     public void updatePost(final Long userId, final Long postId, PostUpdateRequest.Update dto) {
-        User author = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdWithAuthor(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.getAuthor().equals(author)) {
+        if (!post.getAuthor().getId().equals(userId)) {
             throw new UnauthorizedUpdateException();
         }
 
@@ -98,13 +95,10 @@ public class PostService {
 
     @Transactional
     public void deletePostById(PostDeleteRequest.Delete dto) {
-        User author = userRepository.findById(dto.userId())
-                .orElseThrow(UserNotFoundException::new);
-
-        Post post = postRepository.findById(dto.postId())
+        Post post = postRepository.findByIdWithAuthor(dto.postId())
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!post.getAuthor().equals(author)) {
+        if (!post.getAuthor().getId().equals(dto.userId())) {
             throw new UnauthorizedDeleteException();
         }
 
