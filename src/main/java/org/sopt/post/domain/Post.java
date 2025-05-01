@@ -18,7 +18,6 @@ import org.sopt.user.domain.User;
 
 @Entity
 public class Post extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -77,5 +76,4 @@ public class Post extends BaseEntity {
     public Tags getTag() {
         return tags;
     }
-
 }

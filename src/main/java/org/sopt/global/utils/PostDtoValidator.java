@@ -30,5 +30,4 @@ public class PostDtoValidator {
             throw new InvalidContentLengthException();
         }
     }
-
 }

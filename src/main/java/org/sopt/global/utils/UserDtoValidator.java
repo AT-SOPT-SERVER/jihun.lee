@@ -4,7 +4,6 @@ import org.sopt.user.exception.EmptyNicknameException;
 import org.sopt.user.exception.InvalidNicknameLengthException;
 
 public class UserDtoValidator {
-
     private static final int MAX_NICKNAME_LENGTH = 10;
 
     public static void validateNicknameStructure(String nickname) {
@@ -17,5 +16,4 @@ public class UserDtoValidator {
             throw new InvalidNicknameLengthException();
         }
     }
-
 }

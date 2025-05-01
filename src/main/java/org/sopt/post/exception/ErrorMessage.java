@@ -1,7 +1,6 @@
 package org.sopt.post.exception;
 
 public enum ErrorMessage {
-
     INVALID_TITLE_LENGTH("게시글 제목은 30자 이하여야 합니다."),
     INVALID_CONTENT_LENGTH("게시글 내용은 1000자 이하여야 합니다."),
     NOT_EMPTY_TITLE("게시글 제목은 비어있을 수 없습니다."),

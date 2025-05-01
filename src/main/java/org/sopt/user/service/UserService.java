@@ -25,5 +25,4 @@ public class UserService {
         User user = User.of(dto.nickname());
         userRepository.save(user);
     }
-
 }

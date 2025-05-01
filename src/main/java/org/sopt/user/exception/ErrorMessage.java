@@ -1,7 +1,6 @@
 package org.sopt.user.exception;
 
 public enum ErrorMessage {
-
     NOT_EMPTY_NICKNAME("닉네임은 비어있을 수 없습니다."),
     DUPLICATED_NICKNAME("이미 존재하는 닉네임입니다."),
     INVALID_NICKNAME_LENGTH("닉네임은 10자 이하여야 합니다."),

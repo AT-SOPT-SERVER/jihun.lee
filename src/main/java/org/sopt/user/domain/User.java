@@ -12,7 +12,6 @@ import org.sopt.post.domain.Post;
 
 @Entity
 public class User extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
@@ -42,5 +41,4 @@ public class User extends BaseEntity {
     public String getNickname() {
         return nickname;
     }
-
 }

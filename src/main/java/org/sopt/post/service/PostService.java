@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PostService {
-
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
@@ -135,5 +134,4 @@ public class PostService {
                 .map(t -> postRepository.searchByKeywordAndTag(keyword, t))
                 .orElse(List.of());
     }
-
 }
