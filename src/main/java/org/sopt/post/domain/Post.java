@@ -45,15 +45,9 @@ public class Post extends BaseEntity {
         this.author = author;
     }
 
-    public void updateTitle(String newTitle) {
+    public void updatePost(String newTitle, String newContent, Tags newTag) {
         this.title = newTitle;
-    }
-
-    public void updateContent(String newContent) {
         this.content = newContent;
-    }
-
-    public void updateTags(Tags newTag) {
         this.tags = newTag;
     }
 

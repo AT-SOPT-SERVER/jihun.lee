@@ -65,16 +65,7 @@ public class PostService {
             throw new UnauthorizedUpdateException();
         }
 
-        if (dto.newTitle() != null) {
-            post.updateTitle(dto.newTitle());
-        }
-        if (dto.newContent() != null) {
-            post.updateContent(dto.newContent());
-        }
-        if (dto.newTag() != null) {
-            Tags newTag = Tags.to(dto.newTag());
-            post.updateTags(newTag);
-        }
+        post.updatePost(dto.newTitle(), dto.newContent(), Tags.to(dto.newTag()));
 
         postRepository.save(post);
     }
