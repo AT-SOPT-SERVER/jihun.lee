@@ -5,8 +5,20 @@ import java.time.LocalDateTime;
 import org.sopt.post.exception.PostCreationExceededException;
 
 public class PostCreationIntervalValidator {
-    public static void validateCreationInterval(LocalDateTime updatedAt) {
-        if (updatedAt != null && Duration.between(updatedAt, LocalDateTime.now()).toMinutes() < 3) {
+    private static final long MIN_INTERVAL_SECONDS = 180;
+
+    private PostCreationIntervalValidator() {
+
+    }
+
+    public static void validateCreationInterval(LocalDateTime lastCreatedAt) {
+        if (lastCreatedAt == null) {
+            return;
+        }
+
+        long elapsedSeconds = Duration.between(lastCreatedAt, LocalDateTime.now()).toSeconds();
+
+        if (elapsedSeconds < MIN_INTERVAL_SECONDS) {
             throw new PostCreationExceededException();
         }
     }
