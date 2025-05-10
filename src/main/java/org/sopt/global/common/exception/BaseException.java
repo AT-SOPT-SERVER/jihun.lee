@@ -3,7 +3,6 @@ package org.sopt.global.common.exception;
 import org.springframework.http.HttpStatus;
 
 public class BaseException extends RuntimeException {
-
     private final HttpStatus status;
 
     public BaseException(final HttpStatus status, final String message) {
@@ -14,5 +13,4 @@ public class BaseException extends RuntimeException {
     public HttpStatus getStatus() {
         return status;
     }
-
 }

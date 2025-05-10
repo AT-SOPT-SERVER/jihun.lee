@@ -1,7 +1,6 @@
 package org.sopt.global.utils;
 
-public class EmojiAndZwjStringUtil {
-
+public class EmojiAndZwjStringUtils {
     public static int countGraphemeClusters(String s) {
         int count = 0;
         int i = 0;
@@ -55,5 +54,4 @@ public class EmojiAndZwjStringUtil {
 
         return cp >= 0x1F1E6 && cp <= 0x1F1FF;
     }
-
 }
