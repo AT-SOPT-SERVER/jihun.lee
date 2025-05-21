@@ -8,7 +8,8 @@ public enum Tags {
 
     BACKEND("백엔드"),
     DATABASE("데이터베이스"),
-    INFRA("인프라");
+    INFRA("인프라"),
+    ETC("기타");
 
     private final String value;
 
