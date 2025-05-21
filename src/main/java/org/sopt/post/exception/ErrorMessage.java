@@ -1,5 +1,10 @@
 package org.sopt.post.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ErrorMessage {
     INVALID_TITLE_LENGTH("게시글 제목은 30자 이하여야 합니다."),
     INVALID_CONTENT_LENGTH("게시글 내용은 1000자 이하여야 합니다."),
@@ -13,12 +18,4 @@ public enum ErrorMessage {
     UNAUTHORIZED_POST_DELETE("다른 사람의 게시글은 삭제할 수 없습니다.");
 
     private final String message;
-
-    ErrorMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

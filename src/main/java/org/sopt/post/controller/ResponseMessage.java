@@ -1,5 +1,10 @@
 package org.sopt.post.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ResponseMessage {
 
     POST_CREATE_SUCCESS("게시글 생성에 성공했습니다."),
@@ -10,12 +15,4 @@ public enum ResponseMessage {
     POST_SEARCH_SUCCESS("게시글 검색에 성공했습니다.");
 
     private final String message;
-
-    ResponseMessage(String message) {
-        this.message = message;
-    }
-    public String getMessage() {
-        return message;
-    }
-
 }

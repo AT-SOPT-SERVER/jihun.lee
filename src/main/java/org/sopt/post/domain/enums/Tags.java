@@ -2,8 +2,12 @@ package org.sopt.post.domain.enums;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.sopt.post.exception.TagsNotFoundException;
 
+@Getter
+@AllArgsConstructor
 public enum Tags {
 
     BACKEND("백엔드"),
@@ -12,10 +16,6 @@ public enum Tags {
     ETC("기타");
 
     private final String value;
-
-    Tags(String value) {
-        this.value = value;
-    }
 
     public static Tags to(String before) {
         return Arrays.stream(Tags.values())
@@ -30,9 +30,4 @@ public enum Tags {
                 .filter(tags -> tags.getValue().equals(before))
                 .findAny();
     }
-
-    public String getValue() {
-        return value;
-    }
-
 }
