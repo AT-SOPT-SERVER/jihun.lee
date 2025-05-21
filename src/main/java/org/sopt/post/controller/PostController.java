@@ -1,6 +1,7 @@
 package org.sopt.post.controller;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.response.ApiResponse;
 import org.sopt.post.domain.Post;
 import org.sopt.post.dto.request.PostCreateRequest;
@@ -25,13 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/posts")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<Post>> createPost(@RequestHeader final Long userId, @RequestBody PostCreateRequest.Create dto){
@@ -41,8 +39,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page) {
-        PostPageResponse postPageResponse = postService.getAllPosts(page);
+    public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "10") int size) {
+        PostPageResponse postPageResponse = postService.getAllPosts(page, size);
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), postPageResponse);
     }
@@ -72,5 +70,4 @@ public class PostController {
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_DELETE_SUCCESS.getMessage());
     }
-
 }
