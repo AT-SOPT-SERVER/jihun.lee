@@ -3,21 +3,18 @@ package org.sopt.post.dto.request;
 import static org.sopt.global.utils.PostDtoValidator.validateContentStructure;
 import static org.sopt.global.utils.PostDtoValidator.validateTitleStructure;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class PostUpdateRequest {
 
     public record Update(
-            String newTitle,
-            String newContent,
+            @NotBlank(message = "제목은 비어있을 수 없습니다.") String newTitle,
+            @NotBlank(message = "내용은 비어있을 수 없습니다.") String newContent,
             String newTag
     ) {
         public Update {
-            if (newTitle != null) {
-                validateTitleStructure(newTitle);
-            }
-            if (newContent != null) {
-                validateContentStructure(newContent);
-            }
+            validateTitleStructure(newTitle);
+            validateContentStructure(newContent);
         }
     }
-
 }
