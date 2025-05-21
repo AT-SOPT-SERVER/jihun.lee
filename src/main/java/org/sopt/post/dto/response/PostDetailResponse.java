@@ -17,9 +17,8 @@ public class PostDetailResponse {
                     post.getTitle(),
                     post.getContent(),
                     post.getAuthor().getNickname(),
-                    post.getTag() != null ? post.getTag().getValue() : null
+                    post.getTags() != null ? post.getTags().getValue() : null
             );
         }
     }
-
 }

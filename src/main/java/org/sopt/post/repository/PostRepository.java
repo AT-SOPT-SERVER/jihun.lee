@@ -17,8 +17,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByTags(Tags tag);
 
-    List<Post> findAllByOrderByModifiedAtDesc();
-
     @Query("select p from Post p join p.author a where p.tags = :tag and (lower(p.title) like lower(concat('%', :keyword, '%')) or lower(a.nickname) like lower(concat('%', :keyword, '%')))")
     List<Post> searchByKeywordAndTag(@Param("keyword") String keyword, @Param("tag") Tags tag);
 
