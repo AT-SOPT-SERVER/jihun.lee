@@ -1,5 +1,6 @@
 package org.sopt.post.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.response.ApiResponse;
@@ -32,14 +33,14 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Post>> createPost(@RequestHeader final Long userId, @RequestBody PostCreateRequest.Create dto){
+    public ResponseEntity<ApiResponse<Post>> createPost(@RequestHeader final Long userId, @Valid @RequestBody PostCreateRequest.Create dto){
         postService.createPost(dto, userId);
 
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.POST_CREATE_SUCCESS.getMessage());
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         PostPageResponse postPageResponse = postService.getAllPosts(page, size);
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), postPageResponse);
@@ -58,7 +59,7 @@ public class PostController {
     }
 
     @PatchMapping("/{id}")
-        public ResponseEntity<ApiResponse<Post>> updatePost(@RequestHeader final Long userId, @PathVariable final Long id, @RequestBody PostUpdateRequest.Update dto) {
+        public ResponseEntity<ApiResponse<Post>> updatePost(@RequestHeader final Long userId, @PathVariable final Long id, @Valid @RequestBody PostUpdateRequest.Update dto) {
         postService.updatePost(userId, id, dto);
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_UPDATE_SUCCESS.getMessage());

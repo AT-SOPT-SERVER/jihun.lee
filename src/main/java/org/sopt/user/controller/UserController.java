@@ -1,5 +1,6 @@
 package org.sopt.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.response.ApiResponse;
 import org.sopt.user.dto.UserRequestDto;
@@ -15,14 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createUser(@RequestBody UserRequestDto.Create request) {
+    public ResponseEntity<ApiResponse<Void>> createUser(@Valid @RequestBody UserRequestDto.Create request) {
         userService.createUser(request);
 
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());
     }
-
 }
