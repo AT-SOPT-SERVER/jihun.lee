@@ -5,6 +5,7 @@ import static org.sopt.global.utils.StringUtils.isNullOrBlank;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.sopt.post.domain.Post;
 import org.sopt.post.domain.enums.Tags;
 import org.sopt.post.dto.request.PostCreateRequest;
@@ -32,21 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class PostService {
-
-    private static final int DEFAULT_PAGE_SIZE = 10;
-
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    public PostService(PostRepository postRepository, UserRepository userRepository){
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-    }
-
-    public PostPageResponse getAllPosts(int page) {
-        return getAllPosts(page, DEFAULT_PAGE_SIZE);
-    }
 
     @Transactional
     public void createPost(PostCreateRequest.Create dto, final Long userId) {
