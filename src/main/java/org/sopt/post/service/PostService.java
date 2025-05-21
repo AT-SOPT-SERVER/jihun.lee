@@ -11,7 +11,9 @@ import org.sopt.post.dto.request.PostCreateRequest;
 import org.sopt.post.dto.request.PostDeleteRequest;
 import org.sopt.post.dto.request.PostSearchRequest;
 import org.sopt.post.dto.request.PostUpdateRequest;
+import org.sopt.post.dto.response.PageableInfo;
 import org.sopt.post.dto.response.PostDetailResponse;
+import org.sopt.post.dto.response.PostPageResponse;
 import org.sopt.post.dto.response.PostSummaryResponse;
 import org.sopt.post.exception.DuplicatedTitleException;
 import org.sopt.post.exception.PostNotFoundException;
@@ -21,18 +23,29 @@ import org.sopt.post.repository.PostRepository;
 import org.sopt.user.domain.User;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class PostService {
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
     public PostService(PostRepository postRepository, UserRepository userRepository){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+    }
+
+    public PostPageResponse getAllPosts(int page) {
+        return getAllPosts(page, DEFAULT_PAGE_SIZE);
     }
 
     @Transactional
@@ -70,12 +83,17 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public List<PostSummaryResponse.Summary> getAllPosts() {
+    public PostPageResponse getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedAt").descending());
+        Page<Post> postPage = postRepository.findAll(pageable);
 
-        return postRepository.findAllByOrderByModifiedAtDesc()
-                .stream()
-                .map(PostSummaryResponse.Summary::of)
-                .toList();
+        List<PostSummaryResponse.Summary> summaries =
+                postPage.stream()
+                        .map(PostSummaryResponse.Summary::of)
+                        .toList();
+
+        PageableInfo pageInfo = PageableInfo.of(postPage);
+        return new PostPageResponse(summaries, pageInfo);
     }
 
     public PostDetailResponse.Detail getPostById(final Long id) {

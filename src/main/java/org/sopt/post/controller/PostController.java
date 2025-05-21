@@ -8,7 +8,7 @@ import org.sopt.post.dto.request.PostDeleteRequest;
 import org.sopt.post.dto.request.PostSearchRequest;
 import org.sopt.post.dto.request.PostUpdateRequest;
 import org.sopt.post.dto.response.PostDetailResponse;
-import org.sopt.post.dto.response.PostSummaryResponse;
+import org.sopt.post.dto.response.PostPageResponse;
 import org.sopt.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +41,10 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PostSummaryResponse.Summary>>> getAllPosts() {
+    public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page) {
+        PostPageResponse postPageResponse = postService.getAllPosts(page);
 
-        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), postService.getAllPosts());
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), postPageResponse);
     }
 
     @GetMapping("/{id}")
