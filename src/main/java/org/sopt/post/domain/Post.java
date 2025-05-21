@@ -1,6 +1,7 @@
 package org.sopt.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,9 +13,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.sopt.comment.domain.Comment;
 import org.sopt.global.common.entity.BaseEntity;
 import org.sopt.post.domain.enums.Tags;
 import org.sopt.user.domain.User;
@@ -31,6 +36,10 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User author;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Comment> comments = new ArrayList<>();
 
     private String title;
 
