@@ -12,11 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.sopt.global.common.entity.BaseEntity;
 import org.sopt.post.domain.enums.Tags;
 import org.sopt.user.domain.User;
 
+@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +41,6 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Tags tags;
 
-    protected Post() {}
-
     public Post(String title, String content, Tags tags, User author) {
         this.title = title;
         this.content = content;
@@ -49,25 +52,5 @@ public class Post extends BaseEntity {
         this.title = newTitle;
         this.content = newContent;
         this.tags = newTag;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public Tags getTag() {
-        return tags;
     }
 }
