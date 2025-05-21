@@ -37,3 +37,6 @@ out/
 .vscode/
 
 application.yml
+
+/src/main/generated/
+/build/generated/sources/annotationProcessor/
