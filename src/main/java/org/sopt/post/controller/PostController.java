@@ -10,6 +10,7 @@ import org.sopt.post.dto.request.PostDeleteRequest;
 import org.sopt.post.dto.request.PostSearchRequest;
 import org.sopt.post.dto.request.PostUpdateRequest;
 import org.sopt.post.dto.response.PostDetailResponse;
+import org.sopt.post.dto.response.PostInfoListResponse;
 import org.sopt.post.dto.response.PostPageResponse;
 import org.sopt.post.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -53,9 +54,9 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Post>>> searchPosts(@RequestParam(required = false) final String keyword, @RequestParam(required = false) final List<String> tags) {
+    public ResponseEntity<ApiResponse<PostInfoListResponse>> searchPosts(@RequestParam(required = false) final String keyword, @RequestParam(required = false) final List<String> tags, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
-        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), postService.searchPosts(PostSearchRequest.Search.of(keyword, tags)));
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), PostInfoListResponse.from(postService.searchPosts(PostSearchRequest.Search.of(keyword, tags, page, size))));
     }
 
     @PatchMapping("/{id}")
