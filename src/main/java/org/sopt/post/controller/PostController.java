@@ -53,9 +53,9 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Post>>> searchPosts(@RequestParam(required = false) final String keyword, @RequestParam(required = false) final String tag) {
+    public ResponseEntity<ApiResponse<List<Post>>> searchPosts(@RequestParam(required = false) final String keyword, @RequestParam(required = false) final List<String> tags) {
 
-        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), postService.searchPosts(PostSearchRequest.Search.of(keyword, tag)));
+        return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), postService.searchPosts(PostSearchRequest.Search.of(keyword, tags)));
     }
 
     @PatchMapping("/{id}")

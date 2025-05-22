@@ -2,7 +2,9 @@ package org.sopt.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,6 +21,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.sopt.comment.domain.Comment;
 import org.sopt.global.common.entity.BaseEntity;
 import org.sopt.post.domain.enums.Tags;
@@ -38,8 +41,16 @@ public class Post extends BaseEntity {
     private User author;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "tag")
+    @Enumerated(EnumType.STRING)
+    @BatchSize(size = 50)
+    private List<Tags> tags = new ArrayList<>();
 
     private String title;
 
@@ -47,19 +58,19 @@ public class Post extends BaseEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private Tags tags;
-
-    public Post(String title, String content, Tags tags, User author) {
+    public Post(String title,
+                String content,
+                List<Tags> tags,
+                User author) {
         this.title = title;
         this.content = content;
-        this.tags = tags;
+        this.tags = new ArrayList<>(tags);
         this.author = author;
     }
 
-    public void updatePost(String newTitle, String newContent, Tags newTag) {
+    public void updatePost(String newTitle, String newContent, List<Tags> newTags) {
         this.title = newTitle;
         this.content = newContent;
-        this.tags = newTag;
+        this.tags    = new ArrayList<>(newTags);
     }
 }

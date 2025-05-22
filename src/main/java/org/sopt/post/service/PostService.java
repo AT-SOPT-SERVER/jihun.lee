@@ -1,11 +1,11 @@
 package org.sopt.post.service;
 
 import static org.sopt.global.utils.PostCreationIntervalValidator.validateCreationInterval;
-import static org.sopt.global.utils.StringUtils.isNullOrBlank;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.sopt.global.utils.StringUtils;
 import org.sopt.post.domain.Post;
 import org.sopt.post.domain.enums.Tags;
 import org.sopt.post.dto.request.PostCreateRequest;
@@ -53,9 +53,9 @@ public class PostService {
                 .orElse(null);
         validateCreationInterval(latestModifiedAtForUser);
 
-        Tags tagEnum = dto.tag() != null ? Tags.to(dto.tag()) : null;
+        List<Tags> tagEnums = Tags.toList(dto.tags());
 
-        Post post = new Post(dto.title(), dto.content(), tagEnum, author);
+        Post post = new Post(dto.title(), dto.content(), tagEnums, author);
         postRepository.save(post);
     }
 
@@ -68,7 +68,7 @@ public class PostService {
             throw new UnauthorizedUpdateException();
         }
 
-        post.updatePost(dto.newTitle(), dto.newContent(), Tags.to(dto.newTag()));
+        post.updatePost(dto.newTitle(), dto.newContent(), Tags.toList(dto.newTags()));
 
         postRepository.save(post);
     }
@@ -106,26 +106,31 @@ public class PostService {
     }
 
     public List<Post> searchPosts(PostSearchRequest.Search dto) {
-        String keyword = dto.keyword();
-        String tag     = dto.tag();
+        String keyword  = dto.keyword();
+        List<String> tagsIn = dto.tags();
 
-        if (isNullOrBlank(keyword) && isNullOrBlank(tag)) {
+        boolean noKeyword = StringUtils.isNullOrBlank(dto.keyword());
+        boolean noTags    = StringUtils.isNullOrEmpty(dto.tags());
+
+        if (noKeyword && noTags) {
             return List.of();
         }
-
-        if (isNullOrBlank(keyword)) {
-            return Tags.from(tag)
-                    .map(postRepository::findAllByTags)
-                    .orElse(List.of());
+        if (noKeyword) {
+            List<Tags> tagEnums = tagsIn.stream()
+                    .filter(s -> !s.isBlank())
+                    .map(Tags::to)
+                    .toList();
+            return postRepository.findAllByTagsIn(tagEnums);
         }
-
-        if (isNullOrBlank(tag)) {
+        if (noTags) {
             return postRepository
                     .findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(keyword, keyword);
         }
+        List<Tags> tagEnums = tagsIn.stream()
+                .filter(s -> !s.isBlank())
+                .map(Tags::to)
+                .toList();
 
-        return Tags.from(tag)
-                .map(t -> postRepository.searchByKeywordAndTag(keyword, t))
-                .orElse(List.of());
+        return postRepository.search(keyword, tagEnums);
     }
 }
