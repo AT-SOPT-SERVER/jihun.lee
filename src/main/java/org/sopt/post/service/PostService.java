@@ -2,10 +2,10 @@ package org.sopt.post.service;
 
 import static org.sopt.global.utils.PostCreationIntervalValidator.validateCreationInterval;
 
+import io.micrometer.common.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.sopt.global.utils.StringUtils;
 import org.sopt.post.domain.Post;
 import org.sopt.post.domain.enums.Tags;
 import org.sopt.post.dto.request.PostCreateRequest;
@@ -105,32 +105,17 @@ public class PostService {
         postRepository.deleteById(dto.postId());
     }
 
-    public List<Post> searchPosts(PostSearchRequest.Search dto) {
+    public Page<Post> searchPosts(PostSearchRequest.Search dto) {
         String keyword  = dto.keyword();
-        List<String> tagsIn = dto.tags();
-
-        boolean noKeyword = StringUtils.isNullOrBlank(dto.keyword());
-        boolean noTags    = StringUtils.isNullOrEmpty(dto.tags());
-
-        if (noKeyword && noTags) {
-            return List.of();
-        }
-        if (noKeyword) {
-            List<Tags> tagEnums = tagsIn.stream()
-                    .filter(s -> !s.isBlank())
-                    .map(Tags::to)
-                    .toList();
-            return postRepository.findByTagsIn(tagEnums);
-        }
-        if (noTags) {
-            return postRepository
-                    .findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(keyword, keyword);
-        }
-        List<Tags> tagEnums = tagsIn.stream()
+        List<Tags> tagEnums = dto.tags().stream()
                 .filter(s -> !s.isBlank())
                 .map(Tags::to)
                 .toList();
+        Pageable pageable = PageRequest.of(dto.page(), dto.size(), Sort.by("createdAt").descending());
+        if (StringUtils.isBlank(keyword) && tagEnums.isEmpty()) {
+            return Page.empty(pageable);
+        }
 
-        return postRepository.search(keyword, tagEnums);
+        return postRepository.search(keyword, tagEnums, pageable);
     }
 }
