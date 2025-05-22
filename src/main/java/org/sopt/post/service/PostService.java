@@ -120,7 +120,7 @@ public class PostService {
                     .filter(s -> !s.isBlank())
                     .map(Tags::to)
                     .toList();
-            return postRepository.findAllByTagsIn(tagEnums);
+            return postRepository.findByTagsIn(tagEnums);
         }
         if (noTags) {
             return postRepository

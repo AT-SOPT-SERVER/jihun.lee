@@ -10,15 +10,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     boolean existsByTitle(String title);
 
+    @Query("""
+    SELECT p
+      FROM Post p
+      JOIN p.tags t
+     WHERE t IN :tags
+    GROUP BY p.id
+    HAVING COUNT(DISTINCT t) = :#{#tags.size()}
+    """)
+    List<Post> findByTagsIn(@Param("tags") List<Tags> tags);
+
     List<Post> findAllByTitleContainingIgnoreCaseOrAuthorNicknameContainingIgnoreCase(String titleKeyword, String authorKeyword);
-
-    List<Post> findAllByTags(Tags tag);
-
-    @Query("select p from Post p join p.author a where p.tags = :tag and (lower(p.title) like lower(concat('%', :keyword, '%')) or lower(a.nickname) like lower(concat('%', :keyword, '%')))")
-    List<Post> searchByKeywordAndTag(@Param("keyword") String keyword, @Param("tag") Tags tag);
 
     Optional<Post> findFirstByAuthorIdOrderByModifiedAtDesc(Long authorId);
 
