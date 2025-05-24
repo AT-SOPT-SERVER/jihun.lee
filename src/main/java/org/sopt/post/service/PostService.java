@@ -24,12 +24,16 @@ import org.sopt.post.repository.PostRepository;
 import org.sopt.user.domain.User;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,6 +43,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
+    @CacheEvict(cacheNames = "posts_page", allEntries = true)
     public void createPost(PostCreateRequest.Create dto, final Long userId) {
         User author = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
@@ -60,6 +65,10 @@ public class PostService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "posts_page", allEntries = true),
+            @CacheEvict(cacheNames = "post_detail", key = "#postId")
+    })
     public void updatePost(final Long userId, final Long postId, PostUpdateRequest.Update dto) {
         Post post = postRepository.findByIdWithAuthor(postId)
                 .orElseThrow(PostNotFoundException::new);
@@ -73,6 +82,8 @@ public class PostService {
         postRepository.save(post);
     }
 
+    @GetMapping
+    @Cacheable(cacheNames = "posts_page", key = "'posts_page:' + #page + ':' + #size")
     public PostPageResponse getAllPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedAt").descending());
         Page<Post> postPage = postRepository.findAll(pageable);
@@ -86,6 +97,8 @@ public class PostService {
         return new PostPageResponse(summaries, pageInfo);
     }
 
+    @GetMapping("/{id}")
+    @Cacheable(cacheNames = "post_detail", key = "#id")
     public PostDetailResponse.Detail getPostById(final Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
@@ -94,6 +107,10 @@ public class PostService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "posts_page", allEntries = true),
+            @CacheEvict(cacheNames = "post_detail", key = "#dto.postId()")
+    })
     public void deletePostById(PostDeleteRequest.Delete dto) {
         Post post = postRepository.findByIdWithAuthor(dto.postId())
                 .orElseThrow(PostNotFoundException::new);
