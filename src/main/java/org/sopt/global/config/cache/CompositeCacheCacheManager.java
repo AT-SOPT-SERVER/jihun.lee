@@ -3,8 +3,10 @@ package org.sopt.global.config.cache;
 import jakarta.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.sopt.global.config.cache.exception.CacheNotFoundException;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -25,18 +27,20 @@ public class CompositeCacheCacheManager implements CacheManager {
     @Override
     public Cache getCache(String name) {
         CacheType type = CacheName.of(name).getCacheType();
-        if (type == CacheType.COMPOSITE) {
-            var found = managers.stream()
-                    .map(m -> m.getCache(name))
-                    .filter(c -> c != null)
-                    .toList();
-            return new CompositeCache(found, updater);
-        }
-        return managers.stream()
+        List<Cache> found = managers.stream()
                 .map(m -> m.getCache(name))
-                .filter(c -> c != null)
-                .findFirst()
-                .orElse(null);
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (found.isEmpty()) {
+            throw new CacheNotFoundException();
+        }
+
+        if (type == CacheType.COMPOSITE) {
+            return new CompositeCache(found, updater);
+        } else {
+            return found.get(0);
+        }
     }
 
     @Override

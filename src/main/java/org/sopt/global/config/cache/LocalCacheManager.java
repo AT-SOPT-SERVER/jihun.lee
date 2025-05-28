@@ -1,12 +1,11 @@
 package org.sopt.global.config.cache;
 
-import jakarta.annotation.PostConstruct;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -14,16 +13,23 @@ import org.springframework.lang.Nullable;
 
 @RequiredArgsConstructor
 public class LocalCacheManager implements CacheManager, UpdatableCacheManager {
-    private final List<Cache> initialCaches;
-    private ConcurrentMap<String, Cache> cacheMap;
-    private Set<String> cacheNames;
+    private final Map<String, Cache> cacheMap;
+    private final Set<String> cacheNames;
 
-    @PostConstruct
-    public void init() {
-        cacheMap = new ConcurrentHashMap<>();
-        cacheMap.putAll(initialCaches.stream()
-                .collect(Collectors.toMap(Cache::getName, c -> c)));
-        cacheNames = cacheMap.keySet();
+    public LocalCacheManager(List<Cache> initialCaches) {
+        Map<String, Cache> map = new ConcurrentHashMap<>();
+        for (Cache cache : initialCaches) {
+            map.merge(
+                    cache.getName(),
+                    cache,
+                    (existingCache, newCache) -> existingCache
+            );
+        }
+        this.cacheMap = map;
+
+        this.cacheNames = Collections.unmodifiableSet(
+                new LinkedHashSet<>(map.keySet())
+        );
     }
 
     @Override
@@ -33,7 +39,7 @@ public class LocalCacheManager implements CacheManager, UpdatableCacheManager {
     }
 
     @Override
-    public Collection<String> getCacheNames() {
+    public Set<String> getCacheNames() {
         return cacheNames;
     }
 
