@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache;
+package org.sopt.global.config.cache.enums;
 
 import lombok.Getter;
 
@@ -6,5 +6,5 @@ import lombok.Getter;
 public enum CacheType {
     LOCAL,
     GLOBAL,
-    COMPOSITE;
+    COMPOSITE
 }

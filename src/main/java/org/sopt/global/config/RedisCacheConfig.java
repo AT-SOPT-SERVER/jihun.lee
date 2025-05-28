@@ -1,8 +1,8 @@
 package org.sopt.global.config;
 
 import java.util.stream.Collectors;
-import org.sopt.global.config.cache.CacheName;
-import org.sopt.global.config.cache.CacheType;
+import org.sopt.global.config.cache.enums.CacheName;
+import org.sopt.global.config.cache.enums.CacheType;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache;
+package org.sopt.global.config.cache.enums;
 
 import java.time.Duration;
 import java.util.Arrays;
