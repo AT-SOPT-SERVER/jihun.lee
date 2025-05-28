@@ -3,10 +3,12 @@ package org.sopt.global.config.cache;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.sopt.global.config.cache.exception.CacheNotFoundException;
 
 @Getter
+@AllArgsConstructor
 public enum CacheName {
     POSTS_PAGE("posts_page",   Duration.ofMinutes(5),  CacheType.COMPOSITE),
     POST_DETAIL("post_detail", Duration.ofMinutes(1),  CacheType.GLOBAL);
@@ -14,12 +16,6 @@ public enum CacheName {
     private final String cacheName;
     private final Duration ttl;
     private final CacheType cacheType;
-
-    CacheName(String cacheName, Duration ttl, CacheType cacheType) {
-        this.cacheName = cacheName;
-        this.ttl       = ttl;
-        this.cacheType = cacheType;
-    }
 
     public static List<CacheName> entries() {
         return Arrays.asList(values());
@@ -29,6 +25,6 @@ public enum CacheName {
         return Arrays.stream(values())
                 .filter(e -> e.cacheName.equals(name))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException(name + " not found"));
+                .orElseThrow(CacheNotFoundException::new);
     }
 }
