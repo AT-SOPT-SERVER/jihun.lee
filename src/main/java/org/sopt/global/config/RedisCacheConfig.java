@@ -1,6 +1,7 @@
 package org.sopt.global.config;
 
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.sopt.global.config.cache.enums.CacheName;
 import org.sopt.global.config.cache.enums.CacheType;
 import org.springframework.cache.CacheManager;
@@ -11,24 +12,21 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@AllArgsConstructor
 public class RedisCacheConfig {
     private final RedisConnectionFactory cf;
 
-    public RedisCacheConfig(RedisConnectionFactory cf) {
-        this.cf = cf;
-    }
-
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration() {
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+
         return RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(SerializationPair.fromSerializer(serializer))
                 .disableCachingNullValues();
     }
 

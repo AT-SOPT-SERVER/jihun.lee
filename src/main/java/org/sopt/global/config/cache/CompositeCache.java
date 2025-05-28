@@ -45,11 +45,17 @@ public class CompositeCache implements Cache {
     @Override
     @Nullable
     public <T> T get(Object key, Callable<T> loader) {
-        try {
-            return findAndUpdate(key, (cache) -> cache.get(key, loader));
-        } catch (Exception ex) {
-            throw new ValueRetrievalException(key, loader, ex);
+        for (Cache c : caches) {
+            try {
+                T value = c.get(key, loader);
+                if (value != null) {
+                    updater.putIfAbsent(c, key, value);
+                    return value;
+                }
+            } catch (Exception ignore) {
+            }
         }
+        return null;
     }
 
     @Override
