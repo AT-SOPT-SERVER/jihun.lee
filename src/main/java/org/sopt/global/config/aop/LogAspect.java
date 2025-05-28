@@ -1,6 +1,7 @@
 package org.sopt.global.config.aop;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -11,8 +12,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 @Aspect
 @Slf4j
@@ -27,11 +30,17 @@ public class LogAspect {
 
     @Around("businessMethods()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
+        String id = joinPoint.getSignature().getDeclaringTypeName() + "#" + joinPoint.getSignature().getName();
+        StopWatch stopWatch = new StopWatch(id);
+        stopWatch.start();
         try {
+
             return joinPoint.proceed();
         } finally {
-            log.info("▶ [TOTAL] {} 소요시간 {} ms", joinPoint.getSignature(), System.currentTimeMillis() - start);
+            stopWatch.stop();
+            if (log.isInfoEnabled()) {
+                log.info("▶ {} 소요시간 {} ms", joinPoint.getSignature(), stopWatch.getTotalTimeMillis());
+            }
         }
     }
 
@@ -40,31 +49,57 @@ public class LogAspect {
         ServletRequestAttributes attrs =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        if (attrs != null) {
-            HttpServletRequest req = attrs.getRequest();
-            String uri       = URLDecoder.decode(req.getRequestURI(), StandardCharsets.UTF_8);
-            String httpMethod= req.getMethod();
-            JSONObject params= extractParams(req);
+        if (attrs != null && log.isInfoEnabled()) {
+            HttpServletRequest raw = attrs.getRequest();
+            ContentCachingRequestWrapper request = wrapIfNecessary(raw);
+
+            String uri = decode(request.getRequestURI());
+            String httpMethod = request.getMethod();
+            String params = extractParams(request);
+            String body = extractBody(request);
 
             log.info("[{}] {}", httpMethod, uri);
             log.info("    handler = {}.{}",
                     joinPoint.getSignature().getDeclaringType().getSimpleName(),
                     joinPoint.getSignature().getName());
-            log.info("    params  = {}", params.toString());
+            log.info("    params  = {}", params);
+            if (!body.isEmpty()) {
+                log.info("    body    = {}", body);
+            }
         }
 
         return joinPoint.proceed();
     }
 
-    private JSONObject extractParams(HttpServletRequest request) {
+    private String extractParams(HttpServletRequest req) {
         JSONObject json = new JSONObject();
-        Enumeration<String> names = request.getParameterNames();
+        Enumeration<String> names = req.getParameterNames();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             String safe = name.replaceAll("\\.", "_");
-            json.put(safe, request.getParameter(name));
+            json.put(safe, req.getParameter(name));
         }
+        return json.toString();
+    }
 
-        return json;
+    private String decode(String uri) {
+        return URLDecoder.decode(uri, StandardCharsets.UTF_8);
+    }
+
+    private String extractBody(ContentCachingRequestWrapper req) {
+        byte[] buf = req.getContentAsByteArray();
+        if (buf.length == 0) return "";
+        try {
+            return new String(buf, req.getCharacterEncoding());
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+
+    private ContentCachingRequestWrapper wrapIfNecessary(HttpServletRequest request) {
+        if (request instanceof ContentCachingRequestWrapper) {
+            return (ContentCachingRequestWrapper) request;
+        }
+        return new ContentCachingRequestWrapper(request);
     }
 }
