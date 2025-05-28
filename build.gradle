@@ -53,6 +53,10 @@ dependencies {
 
     // JSR310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.json:json:20230227'
 }
 
 test {
