@@ -25,7 +25,6 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
         Comment comment = new Comment(dto.content(), post);
-
         commentRepository.save(comment);
     }
 

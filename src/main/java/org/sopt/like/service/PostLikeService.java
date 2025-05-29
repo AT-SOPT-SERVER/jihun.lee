@@ -30,7 +30,6 @@ public class PostLikeService {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException();
         }
-
         boolean exists = postLikeRepository.existsByPostIdAndUserId(postId, userId);
         if (exists) {
             postLikeRepository.deleteByPostIdAndUserId(postId, userId);
@@ -56,8 +55,8 @@ public class PostLikeService {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
-
         Page<String> nicknames = postLikeRepository.findNicknamesByPostId(postId, PageRequest.of(page, size, Sort.by("id").descending()));
+
         return LikersPageResponse.of(nicknames);
     }
 
