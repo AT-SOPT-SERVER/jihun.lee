@@ -28,18 +28,21 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<ApiResponse<Detail>> create(@PathVariable Long postId, @Valid @RequestBody CommentCreateRequest.Create dto) {
         commentService.createComment(postId, dto);
+
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.COMMENT_CREATE_SUCCESS.getMessage());
     }
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<ApiResponse<CommentResponse.Detail>> update(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentUpdateRequest.Update dto) {
         commentService.updateComment(postId, commentId, dto);
+
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.COMMENT_UPDATE_SUCCESS.getMessage());
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long postId, @PathVariable Long commentId) {
         commentService.deleteComment(postId, commentId);
+
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.COMMENT_DELETE_SUCCESS.getMessage());
     }
 }
