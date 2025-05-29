@@ -1,4 +1,4 @@
-package org.sopt.post.dto.response;
+package org.sopt.global.common.response;
 
 
 import org.springframework.data.domain.Page;
