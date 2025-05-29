@@ -9,6 +9,9 @@ import org.sopt.like.dto.response.LikersPageResponse;
 import org.sopt.like.repository.CommentLikeRepository;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +26,10 @@ public class CommentLikeService {
     private final UserRepository userRepository;
 
     @DistributedLock(key = "'comment:' + #commentId+ ':user:' + #userId")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "post_likes_count", key = "#commentId"),
+            @CacheEvict(cacheNames = "post_likes_users", allEntries = true)
+    })
     public void toggleCommentLike(Long commentId, Long userId) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();
@@ -42,6 +49,7 @@ public class CommentLikeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "post_likes_count", key = "#commentId")
     public long getCommentLikeCount(Long commentId) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();
@@ -51,6 +59,7 @@ public class CommentLikeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "post_likes_users", key = "#commentId + ':' + #page + ':' + #size")
     public LikersPageResponse getCommentLikers(Long commentId, int page, int size) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();

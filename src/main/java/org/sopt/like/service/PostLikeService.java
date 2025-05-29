@@ -9,6 +9,9 @@ import org.sopt.post.exception.PostNotFoundException;
 import org.sopt.post.repository.PostRepository;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +26,10 @@ public class PostLikeService {
     private final UserRepository userRepository;
 
     @DistributedLock(key = "'post:' + #postId + ':user:' + #userId")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "post_likes_count", key = "#postId"),
+            @CacheEvict(cacheNames = "post_likes_users", allEntries = true)
+    })
     public void togglePostLike(Long postId, Long userId) {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
@@ -42,6 +49,7 @@ public class PostLikeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "post_likes_count", key = "#postId")
     public long getPostLikeCount(Long postId) {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
@@ -51,6 +59,10 @@ public class PostLikeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(
+            cacheNames = "post_likes_users",
+            key = "'post:' + #postId + ':page:' + #page + ':size:' + #size"
+    )
     public LikersPageResponse getPostLikers(Long postId, int page, int size) {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
