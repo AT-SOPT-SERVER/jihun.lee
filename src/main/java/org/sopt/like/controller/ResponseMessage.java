@@ -8,7 +8,11 @@ import lombok.Getter;
 public enum ResponseMessage {
     LIKE_TOGGLE_SUCCESS("좋아요 토글에 성공했습니다."),
     LIKE_COUNT_SUCCESS("좋아요 수 조회에 성공했습니다."),
-    LIKE_GET_USERS_SUCCESS("좋아요를 누른 사용자 목록 조회에 성공했습니다.");
+    LIKE_GET_USERS_SUCCESS("좋아요를 누른 사용자 목록 조회에 성공했습니다."),
+
+    COMMENT_LIKE_TOGGLE_SUCCESS("댓글 좋아요 토글에 성공했습니다."),
+    COMMENT_LIKE_COUNT_SUCCESS("댓글 좋아요 수 조회에 성공했습니다."),
+    COMMENT_LIKE_GET_USERS_SUCCESS("댓글 좋아요를 누른 사용자 목록 조회에 성공했습니다.");
 
     private final String message;
 }
