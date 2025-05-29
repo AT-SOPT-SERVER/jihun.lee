@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache.exception;
+package org.sopt.global.common.cache.exception;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

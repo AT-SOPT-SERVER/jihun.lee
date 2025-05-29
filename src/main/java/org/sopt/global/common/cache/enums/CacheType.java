@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache.enums;
+package org.sopt.global.common.cache.enums;
 
 import lombok.Getter;
 

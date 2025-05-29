@@ -1,8 +1,8 @@
 package org.sopt.global.config;
 
 import java.util.List;
-import org.sopt.global.config.cache.CompositeCacheCacheManager;
-import org.sopt.global.config.cache.LocalCacheManager;
+import org.sopt.global.common.cache.CompositeCacheCacheManager;
+import org.sopt.global.common.cache.LocalCacheManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

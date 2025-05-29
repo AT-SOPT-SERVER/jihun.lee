@@ -1,4 +1,4 @@
-package org.sopt.global.config.aop.lock;
+package org.sopt.global.common.aop.lock;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

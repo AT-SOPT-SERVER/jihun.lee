@@ -1,4 +1,4 @@
-package org.sopt.global.config.aop.lock;
+package org.sopt.global.common.aop.lock;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;

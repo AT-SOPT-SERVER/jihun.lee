@@ -3,7 +3,7 @@ package org.sopt.like.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.comment.exception.CommentNotFoundException;
 import org.sopt.comment.repository.CommentRepository;
-import org.sopt.global.config.aop.lock.DistributedLock;
+import org.sopt.global.common.aop.lock.DistributedLock;
 import org.sopt.like.domain.CommentLike;
 import org.sopt.like.dto.response.LikersPageResponse;
 import org.sopt.like.repository.CommentLikeRepository;

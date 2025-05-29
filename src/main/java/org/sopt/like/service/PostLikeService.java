@@ -1,7 +1,7 @@
 package org.sopt.like.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.global.config.aop.lock.DistributedLock;
+import org.sopt.global.common.aop.lock.DistributedLock;
 import org.sopt.like.domain.PostLike;
 import org.sopt.like.dto.response.LikersPageResponse;
 import org.sopt.like.repository.PostLikeRepository;

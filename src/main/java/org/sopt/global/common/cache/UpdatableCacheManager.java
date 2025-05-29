@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache;
+package org.sopt.global.common.cache;
 
 import org.springframework.cache.Cache;
 

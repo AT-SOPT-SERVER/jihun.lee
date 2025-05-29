@@ -1,11 +1,11 @@
-package org.sopt.global.config.cache;
+package org.sopt.global.common.cache;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import lombok.RequiredArgsConstructor;
-import org.sopt.global.config.cache.exception.CacheNotFoundException;
+import org.sopt.global.common.cache.exception.CacheNotFoundException;
 import org.springframework.cache.Cache;
 import org.springframework.lang.Nullable;
 

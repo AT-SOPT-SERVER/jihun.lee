@@ -1,4 +1,4 @@
-package org.sopt.global.config.aop.lock;
+package org.sopt.global.common.aop.lock;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
@@ -22,7 +22,7 @@ public class DistributedLockAop {
     private final RedissonClient redissonClient;
     private final AopForTransaction aopForTransaction;
 
-    @Around("@annotation(org.sopt.global.config.aop.lock.DistributedLock)")
+    @Around("@annotation(org.sopt.global.common.aop.lock.DistributedLock)")
     public Object lock(final ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();

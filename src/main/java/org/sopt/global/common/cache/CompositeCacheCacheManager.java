@@ -1,4 +1,4 @@
-package org.sopt.global.config.cache;
+package org.sopt.global.common.cache;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Collection;
@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.sopt.global.config.cache.enums.CacheName;
-import org.sopt.global.config.cache.enums.CacheType;
-import org.sopt.global.config.cache.exception.CacheNotFoundException;
+import org.sopt.global.common.cache.enums.CacheName;
+import org.sopt.global.common.cache.enums.CacheType;
+import org.sopt.global.common.cache.exception.CacheNotFoundException;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 

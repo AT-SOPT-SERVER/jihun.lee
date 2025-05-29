@@ -1,4 +1,4 @@
-package org.sopt.global.config.aop.log;
+package org.sopt.global.common.aop.log;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;

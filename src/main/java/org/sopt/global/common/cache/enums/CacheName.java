@@ -1,11 +1,11 @@
-package org.sopt.global.config.cache.enums;
+package org.sopt.global.common.cache.enums;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.sopt.global.config.cache.exception.CacheNotFoundException;
+import org.sopt.global.common.cache.exception.CacheNotFoundException;
 
 @Getter
 @AllArgsConstructor
