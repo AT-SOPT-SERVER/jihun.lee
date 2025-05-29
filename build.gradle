@@ -47,6 +47,9 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+
     // Cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
@@ -56,7 +59,10 @@ dependencies {
 
     // AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // JSON
     implementation 'org.json:json:20230227'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
 }
 
 test {
