@@ -1,4 +1,4 @@
-package org.sopt.global.config;
+package org.sopt.global.config.redis;
 
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;

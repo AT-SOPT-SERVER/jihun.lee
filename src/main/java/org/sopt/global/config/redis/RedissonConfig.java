@@ -1,4 +1,4 @@
-package org.sopt.global.config;
+package org.sopt.global.config.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

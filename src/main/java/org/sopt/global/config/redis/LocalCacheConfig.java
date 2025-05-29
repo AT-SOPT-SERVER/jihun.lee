@@ -1,4 +1,4 @@
-package org.sopt.global.config;
+package org.sopt.global.config.redis;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.nio.charset.StandardCharsets;

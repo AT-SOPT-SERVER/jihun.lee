@@ -1,4 +1,4 @@
-package org.sopt.global.config;
+package org.sopt.global.config.redis;
 
 
 import org.springframework.beans.factory.annotation.Value;
