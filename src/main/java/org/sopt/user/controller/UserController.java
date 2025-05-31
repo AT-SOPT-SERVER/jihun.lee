@@ -1,5 +1,7 @@
 package org.sopt.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.response.ApiResponse;
@@ -14,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "유저")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
+    @Operation(summary = "회원가입")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> createUser(@Valid @RequestBody RegisterRequest.Create request) {
         userService.createUser(request);
@@ -27,6 +31,7 @@ public class UserController {
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.USER_CREATE_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "로그인 (토큰 반환)")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody @Valid LoginRequest request) {
 

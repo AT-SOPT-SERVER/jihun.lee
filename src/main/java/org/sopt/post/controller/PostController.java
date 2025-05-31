@@ -1,5 +1,7 @@
 package org.sopt.post.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "게시글")
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class PostController {
 
     private final PostService postService;
 
+    @Operation(summary = "게시글 작성")
     @PostMapping
     public ResponseEntity<ApiResponse<Post>> createPost(@RequestHeader final Long userId, @Valid @RequestBody PostCreateRequest.Create dto){
         postService.createPost(dto, userId);
@@ -40,6 +44,7 @@ public class PostController {
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.POST_CREATE_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "게시글 전체 조회 (페이지네이션)")
     @GetMapping
     public ResponseEntity<ApiResponse<PostPageResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         PostPageResponse postPageResponse = postService.getAllPosts(page, size);
@@ -47,18 +52,21 @@ public class PostController {
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_ALL_SUCCESS.getMessage(), postPageResponse);
     }
 
+    @Operation(summary = "게시글 상세 조회 (댓글 포함)")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<PostDetailResponse.Detail>> getPostById(@PathVariable final Long id) {
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_GET_DETAIL_SUCCESS.getMessage(), postService.getPostById(id));
     }
 
+    @Operation(summary = "게시글 검색 조회 (검색어, 태그, 페이지네이션)")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<PostInfoListResponse>> searchPosts(@RequestParam(required = false) final String keyword, @RequestParam(required = false) final List<String> tags, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_SEARCH_SUCCESS.getMessage(), PostInfoListResponse.from(postService.searchPosts(PostSearchRequest.Search.of(keyword, tags, page, size))));
     }
 
+    @Operation(summary = "게시글 수정")
     @PatchMapping("/{id}")
         public ResponseEntity<ApiResponse<Post>> updatePost(@RequestHeader final Long userId, @PathVariable final Long id, @Valid @RequestBody PostUpdateRequest.Update dto) {
         postService.updatePost(userId, id, dto);
@@ -66,6 +74,7 @@ public class PostController {
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.POST_UPDATE_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deletePostById(@RequestHeader final Long userId, @PathVariable final Long id) {
         postService.deletePostById(new PostDeleteRequest.Delete(userId, id));

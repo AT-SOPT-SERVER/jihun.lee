@@ -1,5 +1,7 @@
 package org.sopt.comment.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.comment.dto.request.CommentCreateRequest;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "댓글")
 @RestController
 @RequestMapping("/api/comments/{postId}")
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @Operation(summary = "댓글 작성")
     @PostMapping
     public ResponseEntity<ApiResponse<Detail>> create(@PathVariable Long postId, @Valid @RequestBody CommentCreateRequest.Create dto) {
         commentService.createComment(postId, dto);
@@ -32,6 +36,7 @@ public class CommentController {
         return ApiResponse.response(HttpStatus.CREATED, ResponseMessage.COMMENT_CREATE_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "댓글 수정")
     @PatchMapping("/{commentId}")
     public ResponseEntity<ApiResponse<CommentResponse.Detail>> update(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentUpdateRequest.Update dto) {
         commentService.updateComment(postId, commentId, dto);
@@ -39,6 +44,7 @@ public class CommentController {
         return ApiResponse.response(HttpStatus.OK, ResponseMessage.COMMENT_UPDATE_SUCCESS.getMessage());
     }
 
+    @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long postId, @PathVariable Long commentId) {
         commentService.deleteComment(postId, commentId);
