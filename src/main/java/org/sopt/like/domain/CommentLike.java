@@ -29,4 +29,9 @@ public class CommentLike {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    public CommentLike(Long commentId, Long userId) {
+        this.commentId = commentId;
+        this.userId = userId;
+    }
 }

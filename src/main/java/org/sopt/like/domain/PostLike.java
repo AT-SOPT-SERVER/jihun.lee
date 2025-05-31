@@ -29,4 +29,9 @@ public class PostLike {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    public PostLike(Long postId, Long userId) {
+        this.postId = postId;
+        this.userId = userId;
+    }
 }
