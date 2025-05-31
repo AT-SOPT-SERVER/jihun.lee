@@ -1,5 +1,6 @@
 package org.sopt.like.repository;
 
+import java.util.Optional;
 import org.sopt.like.domain.CommentLike;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
-    boolean existsByCommentIdAndUserId(Long commentId, Long userId);
-    void deleteByCommentIdAndUserId(Long commentId, Long userId);
+    Optional<CommentLike> findByCommentIdAndUserId(Long commentId, Long userId);
     long countByCommentId(Long commentId);
 
     @Query("""

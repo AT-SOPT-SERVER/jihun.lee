@@ -1,5 +1,6 @@
 package org.sopt.like.repository;
 
+import java.util.Optional;
 import org.sopt.like.domain.PostLike;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike,Long> {
-    boolean existsByPostIdAndUserId(Long postId, Long userId);
-    void deleteByPostIdAndUserId(Long postId, Long userId);
+    Optional<PostLike> findByPostIdAndUserId(Long postId, Long userId);
     long countByPostId(Long postId);
 
     @Query("""

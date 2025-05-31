@@ -1,12 +1,15 @@
 package org.sopt.like.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.sopt.comment.domain.Comment;
 import org.sopt.comment.exception.CommentNotFoundException;
 import org.sopt.comment.repository.CommentRepository;
 import org.sopt.global.common.aop.lock.DistributedLock;
 import org.sopt.like.domain.CommentLike;
 import org.sopt.like.dto.response.LikersPageResponse;
 import org.sopt.like.repository.CommentLikeRepository;
+import org.sopt.user.domain.User;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,29 +30,20 @@ public class CommentLikeService {
 
     @DistributedLock(key = "'comment:' + #commentId+ ':user:' + #userId")
     @Caching(evict = {
-            @CacheEvict(cacheNames = "post_likes_count", key = "#commentId"),
-            @CacheEvict(cacheNames = "post_likes_users", allEntries = true)
+            @CacheEvict(cacheNames = "comment_likes_count", key = "#commentId"),
+            @CacheEvict(cacheNames = "comment_likes_users", allEntries = true)
     })
     public void toggleCommentLike(Long commentId, Long userId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new CommentNotFoundException();
-        }
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException();
-        }
-        boolean exists = commentLikeRepository.existsByCommentIdAndUserId(commentId, userId);
-        if (exists) {
-            commentLikeRepository.deleteByCommentIdAndUserId(commentId, userId);
-        } else {
-            commentLikeRepository.save(CommentLike.builder()
-                    .commentId(commentId)
-                    .userId(userId)
-                    .build());
-        }
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(CommentNotFoundException::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        processCommentLike(comment, user);
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "post_likes_count", key = "#commentId")
+    @Cacheable(cacheNames = "comment_likes_count", key = "#commentId")
     public long getCommentLikeCount(Long commentId) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();
@@ -59,7 +53,7 @@ public class CommentLikeService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "post_likes_users", key = "#commentId + ':' + #page + ':' + #size")
+    @Cacheable(cacheNames = "comment_likes_users", key = "#commentId + ':' + #page + ':' + #size")
     public LikersPageResponse getCommentLikers(Long commentId, int page, int size) {
         if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();
@@ -67,5 +61,20 @@ public class CommentLikeService {
         Page<String> nicknames = commentLikeRepository.findNicknamesByCommentId(commentId, PageRequest.of(page, size, Sort.by("id").descending()));
 
         return LikersPageResponse.of(nicknames);
+    }
+
+    @Transactional
+    public void processCommentLike(Comment comment, User user) {
+        Long commentId = comment.getId();
+        Long userId    = user.getId();
+        Optional<CommentLike> existingLike =
+                commentLikeRepository.findByCommentIdAndUserId(commentId, userId);
+
+        if (existingLike.isPresent()) {
+            commentLikeRepository.delete(existingLike.get());
+        } else {
+            CommentLike newLike = new CommentLike(commentId, userId);
+            commentLikeRepository.save(newLike);
+        }
     }
 }

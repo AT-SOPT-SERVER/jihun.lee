@@ -1,12 +1,15 @@
 package org.sopt.like.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sopt.global.common.aop.lock.DistributedLock;
 import org.sopt.like.domain.PostLike;
 import org.sopt.like.dto.response.LikersPageResponse;
 import org.sopt.like.repository.PostLikeRepository;
+import org.sopt.post.domain.Post;
 import org.sopt.post.exception.PostNotFoundException;
 import org.sopt.post.repository.PostRepository;
+import org.sopt.user.domain.User;
 import org.sopt.user.exception.UserNotFoundException;
 import org.sopt.user.repository.UserRepository;
 import org.springframework.cache.annotation.CacheEvict;
@@ -31,21 +34,12 @@ public class PostLikeService {
             @CacheEvict(cacheNames = "post_likes_users", allEntries = true)
     })
     public void togglePostLike(Long postId, Long userId) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException();
-        }
-        boolean exists = postLikeRepository.existsByPostIdAndUserId(postId, userId);
-        if (exists) {
-            postLikeRepository.deleteByPostIdAndUserId(postId, userId);
-        } else {
-            postLikeRepository.save(PostLike.builder()
-                    .postId(postId)
-                    .userId(userId)
-                    .build());
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        processPostLike(post, user);
     }
 
     @Transactional(readOnly = true)
@@ -72,4 +66,18 @@ public class PostLikeService {
         return LikersPageResponse.of(nicknames);
     }
 
+    @Transactional
+    public void processPostLike(Post post, User user) {
+        Long postId = post.getId();
+        Long userId = user.getId();
+        Optional<PostLike> existingLike =
+                postLikeRepository.findByPostIdAndUserId(postId, userId);
+
+        if (existingLike.isPresent()) {
+            postLikeRepository.delete(existingLike.get());
+        } else {
+            PostLike newLike = new PostLike(postId, userId);
+            postLikeRepository.save(newLike);
+        }
+    }
 }

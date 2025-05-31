@@ -1,7 +1,5 @@
 package org.sopt.global.auth.jwt.utils;
 
-import static org.sopt.global.auth.jwt.utils.JwtProvider.ACCESS_TOKEN_SUBJECT;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtExtractor {
     private static final String BEARER = "Bearer ";
+    private static final String HEADER_NAME = "Authorization";
     private static final String ID_CLAIM = "id";
     private static final String NICKNAME_CLAIM = "nickname";
     private final Key key;
@@ -26,8 +25,14 @@ public class JwtExtractor {
     }
 
     public Optional<String> extractJwtToken(HttpServletRequest request) {
-
-        return Optional.ofNullable(request.getHeader(ACCESS_TOKEN_SUBJECT));
+        String header = request.getHeader(HEADER_NAME);
+        if (header == null) {
+            return Optional.empty();
+        }
+        if (header.startsWith(BEARER)) {
+            return Optional.of(header.substring(BEARER.length()));
+        }
+        return Optional.of(header);
     }
 
     public Long getId(String token){
