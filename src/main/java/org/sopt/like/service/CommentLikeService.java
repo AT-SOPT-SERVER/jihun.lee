@@ -1,0 +1,80 @@
+package org.sopt.like.service;
+
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.sopt.comment.domain.Comment;
+import org.sopt.comment.exception.CommentNotFoundException;
+import org.sopt.comment.repository.CommentRepository;
+import org.sopt.global.common.aop.lock.DistributedLock;
+import org.sopt.like.domain.CommentLike;
+import org.sopt.like.dto.response.LikersPageResponse;
+import org.sopt.like.repository.CommentLikeRepository;
+import org.sopt.user.domain.User;
+import org.sopt.user.exception.UserNotFoundException;
+import org.sopt.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CommentLikeService {
+    private final CommentLikeRepository commentLikeRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+
+    @DistributedLock(key = "'comment:' + #commentId+ ':user:' + #userId")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "comment_likes_count", key = "#commentId"),
+            @CacheEvict(cacheNames = "comment_likes_users", allEntries = true)
+    })
+    public void toggleCommentLike(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(CommentNotFoundException::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        processCommentLike(comment, user);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "comment_likes_count", key = "#commentId")
+    public long getCommentLikeCount(Long commentId) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentNotFoundException();
+        }
+
+        return commentLikeRepository.countByCommentId(commentId);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "comment_likes_users", key = "#commentId + ':' + #page + ':' + #size")
+    public LikersPageResponse getCommentLikers(Long commentId, int page, int size) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentNotFoundException();
+        }
+        Page<String> nicknames = commentLikeRepository.findNicknamesByCommentId(commentId, PageRequest.of(page, size, Sort.by("id").descending()));
+
+        return LikersPageResponse.of(nicknames);
+    }
+
+    @Transactional
+    public void processCommentLike(Comment comment, User user) {
+        Long commentId = comment.getId();
+        Long userId    = user.getId();
+        Optional<CommentLike> existingLike =
+                commentLikeRepository.findByCommentIdAndUserId(commentId, userId);
+
+        if (existingLike.isPresent()) {
+            commentLikeRepository.delete(existingLike.get());
+        } else {
+            CommentLike newLike = new CommentLike(commentId, userId);
+            commentLikeRepository.save(newLike);
+        }
+    }
+}

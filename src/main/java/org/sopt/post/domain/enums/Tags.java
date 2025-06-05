@@ -1,20 +1,22 @@
 package org.sopt.post.domain.enums;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
+import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.sopt.post.exception.TagsNotFoundException;
 
+@Getter
+@AllArgsConstructor
 public enum Tags {
 
     BACKEND("백엔드"),
     DATABASE("데이터베이스"),
-    INFRA("인프라");
+    INFRA("인프라"),
+    ETC("기타");
 
     private final String value;
-
-    Tags(String value) {
-        this.value = value;
-    }
 
     public static Tags to(String before) {
         return Arrays.stream(Tags.values())
@@ -23,15 +25,12 @@ public enum Tags {
                 .orElseThrow(TagsNotFoundException::new);
     }
 
-    public static Optional<Tags> from(String before) {
-        if (before == null) return Optional.empty();
-        return Arrays.stream(Tags.values())
-                .filter(tags -> tags.getValue().equals(before))
-                .findAny();
+    public static List<Tags> toList(List<String> befores) {
+        if (befores == null) return List.of();
+        return befores.stream()
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isBlank())
+                .map(Tags::to)
+                .toList();
     }
-
-    public String getValue() {
-        return value;
-    }
-
 }
